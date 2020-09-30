@@ -25,7 +25,7 @@ public class HttpClient {
 
         String headerLine;
         while(!(headerLine = readLine(socket)).isEmpty()) {
-            int colonPos = headerLine.indexOf(':');
+           int colonPos = headerLine.indexOf(':');
             String headerName = headerLine.substring(0, colonPos);
             String headerValue = headerLine.substring(colonPos+1).trim();
 
