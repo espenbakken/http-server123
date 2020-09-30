@@ -33,6 +33,12 @@ public class HttpClient {
 
         }
 
+        int contentLength = Integer.parseInt(getResponseHeader("Content-Length"));
+        StringBuilder body = new StringBuilder();
+        for (int i = 0; i < contentLength; i++) {
+            body.append((char)socket.getInputStream().read());
+        }
+        this.responseBody = body.toString();
     }
 
     private String readLine(Socket socket) throws IOException {
