@@ -1,0 +1,1 @@
+![Java CI with Maven](https://github.com/espenbakken/HTTP-Server/workflows/Java%20CI%20with%20Maven/badge.svg)
