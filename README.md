@@ -10,6 +10,7 @@ Hittil dekker oppgaven disse kravene:
 - GitHub repository er private
 - Veilederne er lagt til som Collaborators på GitHub repository
   PanRagon SeventhDisaster omamoh18 iaffs
+- Dere har committed kode med begge prosjektdeltagernes GitHub konto( Delvis, får ikke kontakt med kohort og har dermed gjort begge parter selv)
   
   
   Sjekkliste: 
