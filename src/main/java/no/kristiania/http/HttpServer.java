@@ -24,6 +24,9 @@ public class HttpServer {
     }
 
     private static void handleRequest(Socket socket) throws IOException {
+        String responseLine = HttpClient.readLine(socket);
+        System.out.println(responseLine);
+
         String response = "HTTP/1.1 200 OK\r\n" +
                 "Content-Type: text/html; charset=utf-8\r\n" +
                 "Content-Length: 11\r\n" +

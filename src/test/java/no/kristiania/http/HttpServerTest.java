@@ -14,4 +14,11 @@ class HttpServerTest {
         HttpClient client = new HttpClient("localhost", 10001, "/echo");
         assertEquals(200, client.getStatusCode());
     }
+
+    @Test
+    void shouldReturnUnsuccesfulErrorCode() throws IOException {
+        HttpServer server = new HttpServer(10002);
+        HttpClient client = new HttpClient("localhost", 10002, "/echo?status=404");
+        assertEquals(404, client.getStatusCode());
+    }
 }
