@@ -25,7 +25,7 @@ public class HttpServer {
 
     private void handleRequest(Socket clientSocket) throws IOException {
         //The first line of the incoming request is called the request line
-        String requestLine = HttpClient.readLine(clientSocket);
+        String requestLine = HttpMessage.readLine(clientSocket);
         System.out.println(requestLine);
 
         // The requestLine consists of a verb (GET, POST), a request target and HTTP version
@@ -55,7 +55,7 @@ public class HttpServer {
                 responseMessage.setHeader("Content-Type", "text/plain");
             }
             responseMessage.write(clientSocket);
-            
+
             try(FileInputStream inputStream = new FileInputStream(targetFile)) {
                 inputStream.transferTo(clientSocket.getOutputStream());
             }
