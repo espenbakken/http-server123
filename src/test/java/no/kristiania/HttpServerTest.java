@@ -1,5 +1,7 @@
-package no.kristiania.http;
+package no.kristiania;
 
+import no.kristiania.http.HttpClient;
+import no.kristiania.http.HttpServer;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
@@ -26,6 +28,6 @@ class HttpServerTest {
     void shouldReturnHttpHeaders() throws IOException {
         new HttpServer(10003);
         HttpClient client = new HttpClient("localhost", 10003, "/echo?body=HelloWorld");
-        assertEquals(10, client.getResponseHeader("Content-Length"));
+        assertEquals("10", client.getResponseHeader("Content-Length"));
     }
 }
