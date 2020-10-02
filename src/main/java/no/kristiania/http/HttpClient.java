@@ -8,28 +8,25 @@ import java.util.Map;
 public class HttpClient {
 
     private int statusCode;
-    private final Map<String, String> headers = new HashMap<>();
+    private  Map<String, String> responseHeaders = new HashMap<>();
     private String responseBody;
-
-    public HttpClient(String hostname, int port, String requestTarget) throws IOException {
+    // Constructor - det som kalles når vi sier new
+    public HttpClient(final String hostname, int port, final String requestTarget) throws IOException {
+        // Connect til serveren
         Socket socket = new Socket(hostname, port);
 
-        // The HTTP request consists of a request line and zero or more header lines, terminated by a blank line
-        //  The request line consists of a verb (GET, POST) a request target and the HTTP version
-        // For example "GET /index.html HTTP/1.1"
-        String request = "GET " + requestTarget + " HTTP/1.1\r\n" +
-                // A request header consists of name: value
-                // The Host header is the same as the web browser shows in the menu bar
-                "Host: " + hostname + "\r\n\r\n";
-        socket.getOutputStream().write(request.getBytes());
+        // HTTP Request consists of request line + 0 or more request headers
+        //  request line consists of verb (GET, POST, PUT) request target ("/echo?status=404"), protocol (HTTP/1.1)
+        HttpMessage requestMessage = new HttpMessage("GET " + requestTarget + " HTTP/1.1");
+        requestMessage.setHeader( "Host", hostname);
+        requestMessage.write(socket);
 
-        // The first line in the response is called the response line
-        String responseLine = readLine(socket);
-        // The response line consists of the HTTP version, a response code and a description
-        // For example "HTTP/1.1 404 Not Found"
-        String[] parts = responseLine.toString().split(" ");
-        //The status line is the second word in the response line
-        statusCode = Integer.parseInt(parts[1]);
+        // The first line in the response is called the response line or status line
+        // response line consists of protocol ("HTTP/1.1") status code (200, 404, 401, 500) and status message
+        String[] responseLineParts = readLine(socket).split(" ");
+
+        // Status code determines if it went ok (2xx) or not (4xx). In addition: 5xx: server error) 3xx
+        statusCode = Integer.parseInt(responseLineParts[1]);
 
         //After the response line, the response had zero or more responsive headers
         String headerLine;
@@ -40,7 +37,7 @@ public class HttpClient {
             // Spaces at the beginning and end of the header value should be ignored
             String headerValue = headerLine.substring(colonPos+1).trim();
 
-            headers.put(headerName, headerValue);
+            responseHeaders.put(headerName, headerValue);
 
         }
 
@@ -78,7 +75,7 @@ public class HttpClient {
     }
 
     public String getResponseHeader(String headerName) {
-        return headers.get(headerName);
+        return responseHeaders.get(headerName);
     }
 
     public String getResponseBody() {
