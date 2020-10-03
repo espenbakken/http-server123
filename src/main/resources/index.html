@@ -2,24 +2,15 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>KristianiaProject</title>
+    <title>Hello World!</title>
     <link rel="stylesheet" href="style.css">
 </head>
-<body>
-<h1>Project view</h1>
-
-<div id="projectMembers"></div>
-
-<div>
-    <a href="newWorker.html">Add new project member</a>
-</div>
-</body>
-<script>
-fetch("/projectMembers")
-    .then(function(response) {
-        return response.text();
-    }).then(function(text) {
-        document.getElementById("projectMembers").innerHTML = text;
-    });
-</script>
+    <body>
+    <h2>Hello World!</h2>
+    <form method="post" action="/addProduct">
+        <p>Product name <input name="productName"></p>
+        <p>Price <input name="price"></p>
+        <p><button>Submit</button></p>
+    </form>
+    </body>
 </html>
