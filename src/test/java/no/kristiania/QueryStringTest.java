@@ -22,9 +22,16 @@ public class QueryStringTest {
     @Test
     void shouldSupportMultipleParameters() {
         QueryString queryString = new QueryString("status=200&body=Hello");
-
         assertEquals("200", queryString.getParameter("status"));
         assertEquals("Hello", queryString.getParameter("body"));
+    }
+
+    @Test
+    void shouldSerializeQueryString(){
+        QueryString queryString = new QueryString("status=200");
+        assertEquals("status=200", queryString.getQueryString());
+        queryString.addParameter("body", "Hello");
+        assertEquals("status=200&body=Hello", queryString.getQueryString());
     }
 
 }

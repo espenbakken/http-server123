@@ -32,7 +32,27 @@ public class HttpServer {
         System.out.println(requestLine);
 
         // The requestLine consists of a verb (GET, POST), a request target and HTTP version
+        String requestMethod = requestLine.split(" ")[0];
         String requestTarget = requestLine.split(" ")[1];
+
+        if (requestMethod.equals("POST")) {
+            HttpMessage requestMessage = new HttpMessage(requestLine);
+            requestMessage.readHeaders(clientSocket);
+
+            int contentLength = Integer.parseInt(requestMessage.getHeader("Content-Length"));
+            StringBuilder body = new StringBuilder();
+            for (int i = 0; i < contentLength; i++) {
+                // Read content body based on content-length
+                body.append((char)clientSocket.getInputStream().read());
+            }
+            QueryString requestForm = new QueryString(body.toString());
+            productNames.add(requestForm.getParameter("productName"));
+
+            HttpMessage responseMessage = new HttpMessage("HTTP/1.1 200 OK");
+            responseMessage.write(clientSocket);
+            return;
+        }
+
         String statusCode = null;
         String body = null;
         // The request target can have a query string separated by ?
