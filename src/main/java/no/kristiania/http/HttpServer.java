@@ -17,11 +17,13 @@ public class HttpServer {
         ServerSocket serverSocket = new ServerSocket(port);
 
         new Thread(() -> {
-            try {
-                Socket socket = serverSocket.accept();
-                handleRequest(socket);
-            } catch (IOException e) {
-                e.printStackTrace();
+            while (true) {
+                try {
+                    Socket socket = serverSocket.accept();
+                    handleRequest(socket);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
             }
         }).start();
     }
@@ -35,13 +37,17 @@ public class HttpServer {
         String requestMethod = requestLine.split(" ")[0];
         String requestTarget = requestLine.split(" ")[1];
 
+        //Here we deal with POST /addProduct
         if (requestMethod.equals("POST")) {
             HttpMessage requestMessage = new HttpMessage(requestLine);
             requestMessage.readHeaders(clientSocket);
             QueryString requestForm = new QueryString(requestMessage.readBody(clientSocket));
             productNames.add(requestForm.getParameter("productName"));
 
-            HttpMessage responseMessage = new HttpMessage("HTTP/1.1 200 OK");
+            HttpMessage responseMessage = new HttpMessage("HTTP/1.1 200 OK\r\n" +
+                    "Content-Length: 2\r\n" +
+                    "\r\n" +
+                    "ok");
             responseMessage.write(clientSocket);
             return;
         }
@@ -51,10 +57,21 @@ public class HttpServer {
         // The request target can have a query string separated by ?
         // For example /echo?status=404
         int questionPos = requestTarget.indexOf('?');
-        if (questionPos != -1) {
+
+        if (requestTarget.equals("/api/products")) {
+            body ="<ul>";
+            for (String productName : getProductNames()) {
+                body += "<li>" + productName + "</li>";
+            }
+            body += "</ul>";
+        } else if (questionPos != -1) {
             QueryString queryString = new QueryString(requestTarget.substring(questionPos + 1));
-            statusCode = queryString.getParameter("status");
-            body = queryString.getParameter("body");
+            if (queryString.getParameter("status") != null){
+                statusCode = queryString.getParameter("status");
+            }
+            if (queryString.getParameter("body") != null) {
+                body = queryString.getParameter("body");
+            }
         } else if (!requestTarget.equals("/echo")){
             File targetFile = new File(documentRoot, requestTarget);
 
