@@ -11,7 +11,7 @@ import java.util.List;
 public class HttpServer {
 
     private File documentRoot;
-    private List<String> productNames = new ArrayList<>();
+    private List<String> memberNames = new ArrayList<>();
 
     public HttpServer(int port) throws IOException {
         ServerSocket serverSocket = new ServerSocket(port);
@@ -37,19 +37,20 @@ public class HttpServer {
         String requestMethod = requestLine.split(" ")[0];
         String requestTarget = requestLine.split(" ")[1];
 
-        //Here we deal with POST /addProduct
+        //Here we deal with POST /addMember
         if (requestMethod.equals("POST")) {
             HttpMessage requestMessage = new HttpMessage(requestLine);
             requestMessage.readHeaders(clientSocket);
             QueryString requestForm = new QueryString(requestMessage.readBody(clientSocket));
-            productNames.add(requestForm.getParameter("productName"));
+            memberNames.add(requestForm.getParameter("memberName"));
 
             HttpMessage responseMessage = new HttpMessage("HTTP/1.1 200 OK\r\n" +
-                    "Content-Length: 2\r\n" +
+                    "Content-Length: 62 \r\n" +
                     "\r\n" +
-                    "ok");
+                    "Member added to project \r\n " +
+                    "Please go back to see all members");
             responseMessage.write(clientSocket);
-            return;
+
         }
 
         String statusCode = null;
@@ -58,10 +59,10 @@ public class HttpServer {
         // For example /echo?status=404
         int questionPos = requestTarget.indexOf('?');
 
-        if (requestTarget.equals("/api/products")) {
+        if (requestTarget.equals("/api/members")) {
             body ="<ul>";
-            for (String productName : getProductNames()) {
-                body += "<li>" + productName + "</li>";
+            for (String memberName : getMemberNames()) {
+                body += "<li>" + memberName + "</li>";
             }
             body += "</ul>";
         } else if (questionPos != -1) {
@@ -86,6 +87,10 @@ public class HttpServer {
 
             if (targetFile.getName().endsWith(".txt")) {
                 responseMessage.setHeader("Content-Type", "text/plain");
+            }
+
+            else if (targetFile.getName().endsWith(".css")) {
+                responseMessage.setHeader("Content-Type", "text/css");
             }
             responseMessage.write(clientSocket);
 
@@ -116,7 +121,7 @@ public class HttpServer {
         this.documentRoot = documentRoot;
     }
 
-    public <E> List<String> getProductNames() {
-        return productNames;
+    public <E> List<String> getMemberNames() {
+        return memberNames;
     }
 }

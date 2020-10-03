@@ -2,18 +2,23 @@
 ##Arbeidskrav #2 
 ### Innlevering av Espen Bakken
 
-Hittil dekker oppgaven disse kravene: 
-- Opprett repository med Github Classroom link: https://classroom.github.com/a/U8dpT5Q0
-- README.md inneholder en korrekt Github Actions badge
-- Koden inneholder et godt sett med tester og testene kjører i Github Actions. Test av serveren skal bruke deres egen http client klasse
-- Koden inneholder en HttpClient klasse med tester mot http://urlecho.appspot.com
-- GitHub repository er private
-- Veilederne er lagt til som Collaborators på GitHub repository
-  PanRagon SeventhDisaster omamoh18 iaffs
-- Dere har committed kode med begge prosjektdeltagernes GitHub konto( Delvis, får ikke kontakt med kohort og har dermed gjort begge parter selv)
-  
-  
-  Sjekkliste: 
-  - .gitignore hindrer target/, .idea og *.iml fra å sjekkes inn ved uhell
-  - Navn på pakker, klasser og metoder skal følge vanlig Java-konvensjon når det gjelder små og store bokstaver
-  - Indentering skal følge vanlig Java-konvensjon 
+Dette er min innlevering av arbeidskrav #2 i faget PGR203.
+Grunnet at jeg ikke har kommet i kontakt med min kohortgruppe og heller ikke har funnet 
+en ny har jeg valgt å gjøre oppgaven på egenhånd. Det er selvfølgelig gjort mange commits og 
+pushes til Github og jeg har flere ganger pullet filene tilbake fra Github og på den 
+måten fått til en slags parprogrammering med meg selv. Det har vært både røde og grønne commits
+som er registrert i Github Actions. 
+
+For å starte serveren er du nødt til å starte Debug funksjonen på HttpServer.java.
+Første side finner du på localhost:8080/index.html i nettleseren og her kan du både 
+legge til nye prosjektmedlemmer og liste medlemmer som allerede er lagt til på serveren med HTTT GET.  
+Medlemmene vises med navn på index.html.
+
+Prosjektet inneholder følgende filer: 
+- HttpServer.java
+- HttpClient.java
+- HttpMessage.java
+- QueryString.java
+
+For alle filene med unntak av HttpMessage følger en testklasse. Prosjektet
+har totalt 17 tester hvor alle kjører grønt. 
