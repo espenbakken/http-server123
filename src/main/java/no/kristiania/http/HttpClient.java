@@ -24,13 +24,7 @@ public class HttpClient {
 
 
         responseMessage = HttpMessage.read(socket);
-
-        int contentLength = Integer.parseInt(getResponseHeader("Content-Length"));
-        StringBuilder body = new StringBuilder();
-        for (int i = 0; i < contentLength; i++) {
-            body.append((char) socket.getInputStream().read());
-        }
-        responseBody = body.toString();
+        responseBody = responseMessage.readBody(socket);
     }
 
     public HttpClient(String hostname, int port, String requestTarget, String method, QueryString form) throws IOException{
