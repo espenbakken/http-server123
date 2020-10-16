@@ -1,4 +1,4 @@
-package no.kristiania;
+package no.kristiania.http;
 
 import no.kristiania.http.HttpClient;
 import no.kristiania.http.HttpServer;
