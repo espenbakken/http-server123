@@ -1,7 +1,9 @@
 package no.kristiania.database;
 
+import org.h2.jdbcx.JdbcDataSource;
 import org.postgresql.ds.PGSimpleDataSource;
 
+import javax.sql.DataSource;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -13,6 +15,11 @@ import java.util.Scanner;
 public class ProductDao {
 
     private ArrayList<String> products = new ArrayList<>();
+    private DataSource dataSource;
+
+    public ProductDao(DataSource dataSource) {
+        this.dataSource = dataSource;
+    }
 
     public static void main(String[] args) throws SQLException {
         PGSimpleDataSource dataSource = new PGSimpleDataSource();
@@ -42,7 +49,13 @@ public class ProductDao {
         }
     }
 
-    public void insert(String product) {
+    public void insert(String product) throws SQLException {
+        try (Connection connection = dataSource.getConnection()) {
+            try (PreparedStatement statement = connection.prepareStatement("INSERT INTO products (product_name) VALUES (?)")) {
+                statement.setString(1, product);
+                statement.executeUpdate();
+            }
+        }
         products.add(product);
     }
 
