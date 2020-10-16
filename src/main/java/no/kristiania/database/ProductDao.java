@@ -1,6 +1,6 @@
 package no.kristiania.database;
 
-import org.h2.jdbcx.JdbcDataSource;
+
 import org.postgresql.ds.PGSimpleDataSource;
 
 import javax.sql.DataSource;
