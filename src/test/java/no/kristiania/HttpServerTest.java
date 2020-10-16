@@ -76,17 +76,17 @@ class HttpServerTest {
     void shouldPostProduct() throws IOException{
         HttpServer server = new HttpServer(10008);
         QueryString member = new QueryString("");
-        member.addParameter("memberName", "Apples");
+        member.addParameter("memberName", "Espen");
         member.addParameter("email", "100");
         new HttpClient("localhost", 10008, "/addMember", "POST", member);
-        assertEquals(List.of("Apples"), server.getMemberNames());
+        assertEquals(List.of("Espen"), server.getMemberNames());
     }
 
     @Test
     void shouldDisplayExistingProducts() throws IOException{
         HttpServer server = new HttpServer(10009);
-        server.getMemberNames().add("Bananas");
+        server.getMemberNames().add("Espen");
         HttpClient client = new HttpClient("localhost", 10009, "/api/members");
-        assertEquals("<ul><li>Bananas</li></ul>", client.getResponseBody());
+        assertEquals("<ul><li>Espen</li></ul>", client.getResponseBody());
     }
 }

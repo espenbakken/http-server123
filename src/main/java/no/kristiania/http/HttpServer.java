@@ -50,7 +50,7 @@ public class HttpServer {
                     "Member added to project \r\n " +
                     "Please go back to see all members");
             responseMessage.write(clientSocket);
-
+            return;
         }
 
         String statusCode = null;
