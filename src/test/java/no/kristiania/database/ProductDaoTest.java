@@ -4,7 +4,6 @@ import org.flywaydb.core.Flyway;
 import org.h2.jdbcx.JdbcDataSource;
 import org.junit.jupiter.api.Test;
 
-import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.Random;
 
@@ -28,13 +27,21 @@ class ProductDaoTest {
         */
 
         ProductDao productDao = new ProductDao(dataSource);
-        String product = exampleProduct();
+        Product product = exampleProduct();
         productDao.insert(product);
-        assertThat(productDao.list()).contains(product);
+        assertThat(productDao.list())
+                .extracting(Product::getName)
+                .contains(product.getName());
+    }
+
+    private Product exampleProduct() {
+        Product product = new Product();
+        product.setName(exampleProductName());
+        return product;
     }
 
     /*Returns a random product name*/
-    private String exampleProduct() {
+    private String exampleProductName() {
         String[] options = {"Apples", "Bananas", "Coconuts", "Dates", "Eggplant"};
         Random random = new Random();
         return options[random.nextInt(options.length)];

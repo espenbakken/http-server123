@@ -32,47 +32,33 @@ public class ProductDao {
         Scanner scanner = new Scanner(System.in);
         String productName = scanner.nextLine();
 
-        productDao.insert(productName);
-        for (String product : productDao.list()) {
-            System.out.println(product);
+        Product product = new Product();
+        product.setName(productName);
+        productDao.insert(product);
+        for (Product p : productDao.list()) {
+            System.out.println(p);
 
-        }
-
-
-        try (Connection connection = dataSource.getConnection()) {
-            try (PreparedStatement statement = connection.prepareStatement("INSERT INTO products (product_name) VALUES (?)")) {
-                statement.setString(1, productName);
-                statement.executeUpdate();
-            }
-        }
-
-        try (Connection connection = dataSource.getConnection()) {
-            try (PreparedStatement statement = connection.prepareStatement("select * from products")) {
-                try (ResultSet rs = statement.executeQuery()) {
-                    while (rs.next()) {
-                        System.out.println(rs.getString("product_name"));
-                    }
-                }
-            }
         }
     }
 
-    public void insert(String product) throws SQLException {
+    public void insert(Product product) throws SQLException {
         try (Connection connection = dataSource.getConnection()) {
             try (PreparedStatement statement = connection.prepareStatement("INSERT INTO products (product_name) VALUES (?)")) {
-                statement.setString(1, product);
+                statement.setString(1, product.getName());
                 statement.executeUpdate();
             }
         }
     }
 
-    public List<String> list() throws SQLException {
-        List<String> products = new ArrayList<>();
+    public List<Product> list() throws SQLException {
+        List<Product> products = new ArrayList<>();
         try (Connection connection = dataSource.getConnection()) {
             try (PreparedStatement statement = connection.prepareStatement("select * from products")) {
                 try (ResultSet rs = statement.executeQuery()) {
                     while (rs.next()) {
-                        products.add(rs.getString("product_name"));
+                        Product product = new Product();
+                        product.setName(rs.getString("product_name"));
+                        products.add(product);
                     }
                 }
             }
@@ -80,5 +66,3 @@ public class ProductDao {
         return products;
     }
 }
-
-
