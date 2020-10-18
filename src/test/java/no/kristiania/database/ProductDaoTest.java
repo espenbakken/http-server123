@@ -1,5 +1,6 @@
 package no.kristiania.database;
 
+import org.flywaydb.core.Flyway;
 import org.h2.jdbcx.JdbcDataSource;
 import org.junit.jupiter.api.Test;
 
@@ -15,9 +16,16 @@ class ProductDaoTest {
     void shouldListInsertedProducts() throws SQLException {
         JdbcDataSource dataSource = new JdbcDataSource();
         dataSource.setUrl("jdbc:h2:mem:testdatabase;DB_CLOSE_DELAY=-1");
+        Flyway.configure().dataSource(dataSource).load().migrate();
+
+       /*
+        *I følge slidesene så skal Testen kjøre grønt uten denne koden som er kommentert ut. Men her i dette prosjektet så kjører Testen grønn med koden...?
+
         try(Connection connection = dataSource.getConnection()) {
             connection.prepareStatement("create table products (product_name varchar)").executeUpdate();
         }
+
+        */
 
         ProductDao productDao = new ProductDao(dataSource);
         String product = exampleProduct();

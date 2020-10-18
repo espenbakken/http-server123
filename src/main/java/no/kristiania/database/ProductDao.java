@@ -14,7 +14,6 @@ import java.util.Scanner;
 
 public class ProductDao {
 
-    private ArrayList<String> products = new ArrayList<>();
     private DataSource dataSource;
 
     public ProductDao(DataSource dataSource) {
@@ -27,9 +26,18 @@ public class ProductDao {
         dataSource.setUser("kristianiashop");
         dataSource.setPassword("sdlkgnslkawat");
 
+        ProductDao productDao = new ProductDao(dataSource);
+
         System.out.println("Please enter product name:");
         Scanner scanner = new Scanner(System.in);
         String productName = scanner.nextLine();
+
+        productDao.insert(productName);
+        for (String product : productDao.list()) {
+            System.out.println(product);
+
+        }
+
 
         try (Connection connection = dataSource.getConnection()) {
             try (PreparedStatement statement = connection.prepareStatement("INSERT INTO products (product_name) VALUES (?)")) {
@@ -56,7 +64,6 @@ public class ProductDao {
                 statement.executeUpdate();
             }
         }
-        products.add(product);
     }
 
     public List<String> list() throws SQLException {
