@@ -1,14 +1,17 @@
 package no.kristiania.http;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
 import java.util.List;
 
 public class HttpServer {
+
+    private static final Logger logger = LoggerFactory.getLogger(HttpServer.class);
 
     private File documentRoot;
     private List<String> memberNames = new ArrayList<>();
@@ -115,6 +118,7 @@ public class HttpServer {
     public static void main(String[] args) throws IOException {
         HttpServer server = new HttpServer(8080);
         server.setDocumentRoot(new File("src/main/resources"));
+        logger.info("Started on http://localhost:{}/index.html", 8080);
     }
 
     public void setDocumentRoot(File documentRoot) {
