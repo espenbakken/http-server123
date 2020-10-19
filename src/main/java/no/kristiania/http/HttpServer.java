@@ -85,13 +85,37 @@ public class HttpServer {
         writeResponse(clientSocket, statusCode, body);
     }
         //shazo jobber med handleFileRequest
-    private boolean handleFileRequest(Socket clientSocket, String requestTarget) throws IOException {
-        try (InputStream inputStream = getClass().getResourceAsStream(requestTarget)) {
-            if(inputStream == null){
+        private boolean handleFileRequest(Socket clientSocket, String requestTarget) throws IOException {
+            try (InputStream inputtStream = getClass().getResourceAsStream(requestTarget)) {
+                if (inputtStream == null) {
 
-            }
-            ByteArrayOutputStream buffer = new ByteArrayOutputStream();
-            inputStream.transferTo(buffer);
+                    //displayed when there is nothing
+                    String body = requestTarget + "does not exist";
+                    String response = "HTTP/1.1 404 Not Found\r\n" +
+                            "Content-Length: " + body.length() + "\r\n" +
+                            "Connection: close\r\n" +
+                            "\r\n" +
+                            body;
+                    // the response will be returned as false
+                    clientSocket.getOutputStream().write(response.getBytes());
+
+                    return false;
+                }
+                ByteArrayOutputStream buffer = new ByteArrayOutputStream();
+                inputtStream.transferTo(buffer);
+
+                String contentType = "text/plain";
+                if (requestTarget.endsWith(".html")) {
+                    contentType = "text/html";
+                }
+
+                String response = "HTTP/1.1 200 OK\r\n" +
+                        "Content-Length: " + buffer.toByteArray().length + "\r\n" +
+                        "Connection: close\r\n" +
+                        "Content-Type: " + contentType + "\r\n" +
+                        "\r\n";
+                clientSocket.getOutputStream().write(response.getBytes());
+                clientSocket.getOutputStream().write(buffer.toByteArray());
         }
 
         File targetFile = new File(documentRoot, requestTarget);
