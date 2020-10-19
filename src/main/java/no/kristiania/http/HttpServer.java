@@ -77,34 +77,47 @@ public class HttpServer {
                 body = queryString.getParameter("body");
             }
         } else if (!requestTarget.equals("/echo")){
-            File targetFile = new File(documentRoot, requestTarget);
-
-            if (!targetFile.exists()){
-                writeResponse(clientSocket, "404", requestTarget + " not found");
-                return;
-            }
-
-            HttpMessage responseMessage = new HttpMessage("HTTP/1.1 200 OK");
-            responseMessage.setHeader("Content-Length", String.valueOf(targetFile.length()));
-            responseMessage.setHeader("Content-type", "text/html");
-
-            if (targetFile.getName().endsWith(".txt")) {
-                responseMessage.setHeader("Content-Type", "text/plain");
-            }
-
-            else if (targetFile.getName().endsWith(".css")) {
-                responseMessage.setHeader("Content-Type", "text/css");
-            }
-            responseMessage.write(clientSocket);
-
-            try(FileInputStream inputStream = new FileInputStream(targetFile)) {
-                inputStream.transferTo(clientSocket.getOutputStream());
-            }
+            if (handleFileRequest(clientSocket, requestTarget)) return;
         }
         if (statusCode == null) statusCode = "200";
         if (body == null) body = "Hello <strong>World</strong>!";
 
         writeResponse(clientSocket, statusCode, body);
+    }
+        //shazo jobber med handleFileRequest
+    private boolean handleFileRequest(Socket clientSocket, String requestTarget) throws IOException {
+        try (InputStream inputStream = getClass().getResourceAsStream(requestTarget)) {
+            if(inputStream == null){
+
+            }
+            ByteArrayOutputStream buffer = new ByteArrayOutputStream();
+            inputStream.transferTo(buffer);
+        }
+
+        File targetFile = new File(documentRoot, requestTarget);
+
+        if (!targetFile.exists()){
+            writeResponse(clientSocket, "404", requestTarget + " not found");
+            return true;
+        }
+
+        HttpMessage responseMessage = new HttpMessage("HTTP/1.1 200 OK");
+        responseMessage.setHeader("Content-Length", String.valueOf(targetFile.length()));
+        responseMessage.setHeader("Content-type", "text/html");
+
+        if (targetFile.getName().endsWith(".txt")) {
+            responseMessage.setHeader("Content-Type", "text/plain");
+        }
+
+        else if (targetFile.getName().endsWith(".css")) {
+            responseMessage.setHeader("Content-Type", "text/css");
+        }
+        responseMessage.write(clientSocket);
+
+        try(FileInputStream inputStream = new FileInputStream(targetFile)) {
+            inputStream.transferTo(clientSocket.getOutputStream());
+        }
+        return false;
     }
 
     private void writeResponse(Socket clientSocket, String statusCode, String body) throws IOException {
