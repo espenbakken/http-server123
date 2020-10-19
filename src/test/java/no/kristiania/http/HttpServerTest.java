@@ -46,7 +46,7 @@ class HttpServerTest {
     @Test
     void shouldReturnFileContent() throws IOException{
         HttpServer server = new HttpServer(10005);
-        File documentRoot = new File("target");
+        File documentRoot = new File("target/test-classes");
         server.setDocumentRoot(documentRoot);
         String fileContent = "Hello " + new Date();
         Files.writeString(new File(documentRoot, "index.html").toPath(), fileContent);
