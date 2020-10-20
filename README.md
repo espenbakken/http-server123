@@ -1,24 +1,22 @@
-![Java CI with Maven](https://github.com/espenbakken/HTTP-Server/workflows/Java%20CI%20with%20Maven/badge.svg)
-##Arbeidskrav #2 
-### Innlevering av Espen Bakken
 
-Dette er min innlevering av arbeidskrav #2 i faget PGR203.
-Grunnet at jeg ikke har kommet i kontakt med min kohortgruppe og heller ikke har funnet 
-en ny har jeg valgt å gjøre oppgaven på egenhånd. Det er selvfølgelig gjort mange commits og 
-pushes til Github og jeg har flere ganger pullet filene tilbake fra Github og på den 
-måten fått til en slags parprogrammering med meg selv. Det har vært både røde og grønne commits
-som er registrert i Github Actions. 
+#Data Access Objects
+##Innlevering 3![build](https://github.com/espenbakken/HTTP-Server/workflows/Java%20CI%20with%20Maven/badge.svg)
+### Gruppe 28
+- Espen Bakken
+- Bahast Agha
+- Shazo Riaz
+-- -- 
 
-For å starte serveren er du nødt til å starte Debug funksjonen på HttpServer.java.
-Første side finner du på localhost:8080/index.html i nettleseren og her kan du både 
-legge til nye prosjektmedlemmer og liste medlemmer som allerede er lagt til på serveren med HTTT GET.  
-Medlemmene vises med navn på index.html.
+Dette er vår innlevering av tredje arbeidskrav. Da vi alle hadde ulike innleveringer
+til arbeidskrav to, valgte vi å ta utgangspunkt i koden til Espen. Vi har 
+med parprogrammering og god kommunikasjon på både Discord og Facebook, samt aktiv 
+bruk av branches endt opp med følgende løsning som kan både lage en webapplikasjon
+og lagre, samt liste ut prosjektmedlemmer fra databasen. Vi har brukt Github Issues for 
+å strukturere arbeidet og underveis kunne krysse av punktene vi har fullført. 
 
-Prosjektet inneholder følgende filer: 
-- HttpServer.java
-- HttpClient.java
-- HttpMessage.java
-- QueryString.java
+Løsningen finner du [her] (https://localhost:8080/index.html) etter oppstart av serveren
+ved kjøring av `java -jar ...jar`
+-- --
+Du finner en properties fil med verdier for `dataSource.url`, `dataSource.username`. `dataSource.password`
+i folderen. 
 
-For alle filene med unntak av HttpMessage følger en testklasse. Prosjektet
-har totalt 17 tester hvor alle kjører grønt. 
