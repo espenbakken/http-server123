@@ -1,6 +1,6 @@
 
-#Data Access Objects
-##Innlevering 3![build](https://github.com/espenbakken/HTTP-Server/workflows/Java%20CI%20with%20Maven/badge.svg)
+# Data Access Objects
+## Innlevering 3 ![build](https://github.com/espenbakken/HTTP-Server/workflows/Java%20CI%20with%20Maven/badge.svg)
 ### Gruppe 28
 - Espen Bakken
 - Bahast Agha
@@ -14,7 +14,7 @@ bruk av branches endt opp med følgende løsning som kan både lage en webapplik
 og lagre, samt liste ut prosjektmedlemmer fra databasen. Vi har brukt Github Issues for 
 å strukturere arbeidet og underveis kunne krysse av punktene vi har fullført. 
 
-Løsningen finner du [her] (https://localhost:8080/index.html) etter oppstart av serveren
+Løsningen finner du [her](https://localhost:8080/index.html) etter oppstart av serveren
 ved kjøring av `java -jar ...jar`
 -- --
 Du finner en properties fil med verdier for `dataSource.url`, `dataSource.username`. `dataSource.password`
