@@ -1,168 +1,169 @@
 package no.kristiania.http;
 
+import no.kristiania.database.Product;
+import no.kristiania.database.ProductDao;
+import org.flywaydb.core.Flyway;
+import org.postgresql.ds.PGSimpleDataSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.*;
+import javax.sql.DataSource;
+import java.io.ByteArrayOutputStream;
+import java.io.FileReader;
+import java.io.IOException;
+import java.io.InputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.util.ArrayList;
+import java.sql.SQLException;
 import java.util.List;
+import java.util.Properties;
 
 public class HttpServer {
 
     private static final Logger logger = LoggerFactory.getLogger(HttpServer.class);
 
-    private File documentRoot;
-    private List<String> memberNames = new ArrayList<>();
+    private final ProductDao productDao;
 
-    public HttpServer(int port) throws IOException {
+    public HttpServer(int port, DataSource dataSource) throws IOException {
+        productDao = new ProductDao(dataSource);
         ServerSocket serverSocket = new ServerSocket(port);
 
         new Thread(() -> {
             while (true) {
-                try {
-                    Socket socket = serverSocket.accept();
-                    handleRequest(socket);
-                } catch (IOException e) {
+                try {Socket clientSocket = serverSocket.accept();
+                    handleRequest(clientSocket);
+                } catch (IOException | SQLException e) {
                     e.printStackTrace();
                 }
             }
         }).start();
     }
 
-    private void handleRequest(Socket clientSocket) throws IOException {
+    private void handleRequest(Socket clientSocket) throws IOException, SQLException {
         //The first line of the incoming request is called the request line
-        String requestLine = HttpMessage.readLine(clientSocket);
-        System.out.println(requestLine);
+        HttpMessage request = new HttpMessage(clientSocket);
+        String requestLine = request.getStartLine();
+        System.out.println("REQUEST" + requestLine);
 
         // The requestLine consists of a verb (GET, POST), a request target and HTTP version
         String requestMethod = requestLine.split(" ")[0];
         String requestTarget = requestLine.split(" ")[1];
 
-        //Here we deal with POST /addMember
-        if (requestMethod.equals("POST")) {
-            HttpMessage requestMessage = new HttpMessage(requestLine);
-            requestMessage.readHeaders(clientSocket);
-            QueryString requestForm = new QueryString(requestMessage.readBody(clientSocket));
-            memberNames.add(requestForm.getParameter("memberName"));
-
-            HttpMessage responseMessage = new HttpMessage("HTTP/1.1 200 OK\r\n" +
-                    "Content-Length: 62 \r\n" +
-                    "\r\n" +
-                    "Member added to project \r\n " +
-                    "Please go back to see all members");
-            responseMessage.write(clientSocket);
-            return;
-        }
-
-        String statusCode = null;
-        String body = null;
-        // The request target can have a query string separated by ?
-        // For example /echo?status=404
         int questionPos = requestTarget.indexOf('?');
 
-        if (requestTarget.equals("/api/members")) {
-            body ="<ul>";
-            for (String memberName : getMemberNames()) {
-                body += "<li>" + memberName + "</li>";
+        String requestPath = questionPos != -1 ? requestTarget.substring(0, questionPos) : requestTarget;
+
+        //Here we deal with POST /addMember
+        if (requestMethod.equals("POST")) {
+            QueryString requestParameter = new QueryString(request.getBody());
+
+            Product product = new Product();
+            product.setName(requestParameter.getParameter("productName"));
+            productDao.insert(product);
+            String body = "Okay";
+            String response = "HTTP/1.1 200 OK\r\n" +
+                    "Connection: close\r\n" +
+                    "Content-Length: " + body.length() + "\r\n" +
+                    "\r\n" +
+                    body;
+            clientSocket.getOutputStream().write(response.getBytes());
+        } else {
+            if (requestPath.equals("/echo")) {
+                handleEchoRequest(clientSocket, requestTarget, questionPos);
+            } else if (requestPath.equals("/api/products")) {
+                handleGetProducts(clientSocket);
+            } else {
+                handleFileRequest(clientSocket, requestPath);
             }
-            body += "</ul>";
-        } else if (questionPos != -1) {
+        }
+    }
+
+    private void handleFileRequest(Socket clientSocket, String requestPath) throws IOException {
+        try (InputStream inputStream = getClass().getResourceAsStream(requestPath)){
+            if (inputStream == null){
+                String body = requestPath + " does not exist";
+                String response = "HTTP/1.1 404 Not Found\r\n" +
+                        "Content-Length: " + body.length() + "\r\n" +
+                        "Connection: close\r\n" +
+                        "\r\n" +
+                        body;
+                clientSocket.getOutputStream().write(response.getBytes());
+                return;
+            }
+            ByteArrayOutputStream buffer = new ByteArrayOutputStream();
+            inputStream.transferTo(buffer);
+
+            String contentType = "text/plain";
+            if (requestPath.endsWith(".html")) {
+                contentType = "text/html";
+            }
+
+            String response = "HTTP/1.1 200 OK\r\n" +
+                    "Content-Length: " + buffer.toByteArray().length + "\r\n" +
+                    "Connection: close\r\n" +
+                    "Content-Type: " + contentType + "\r\n" +
+                    "\r\n";
+            clientSocket.getOutputStream().write(response.getBytes());
+            clientSocket.getOutputStream().write(buffer.toByteArray());
+        }
+    }
+
+    private void handleGetProducts(Socket clientSocket) throws IOException, SQLException {
+        String body = "<ul>";
+        for (Product product : productDao.list()) {
+            body += "<li>" + product.getName() + " (kr " + product.getPrice() + ")</li>";
+        }
+        body += "</ul>";
+        String response = "HTTP/1.1 200 OK\r\n" +
+                "Content-Length: " + body.length() + "\r\n" +
+                "Content-Type: text/html\r\n" +
+                "Connection: close\r\n" +
+                "\r\n" +
+                body;
+
+        clientSocket.getOutputStream().write(response.getBytes());
+    }
+
+    private void handleEchoRequest(Socket clientSocket, String requestTarget, int questionPos) throws IOException{
+        String statusCode = "200";
+        String body = "Hello World";
+        if (questionPos != -1){
             QueryString queryString = new QueryString(requestTarget.substring(questionPos + 1));
             if (queryString.getParameter("status") != null){
                 statusCode = queryString.getParameter("status");
             }
-            if (queryString.getParameter("body") != null) {
+            if (queryString.getParameter("body") != null){
                 body = queryString.getParameter("body");
             }
-        } else if (!requestTarget.equals("/echo")){
-            if (handleFileRequest(clientSocket, requestTarget)) return;
         }
-        if (statusCode == null) statusCode = "200";
-        if (body == null) body = "Hello <strong>World</strong>!";
+        String response = "HTTP/1.1 " + statusCode + " OK\r\n" +
+                "Content-Length: " + body.length() + "\r\n" +
+                "Content-Type: text-plain\r\n" +
+                "Connection: close\r\n" +
+                "\r\n" +
+                body;
 
-        writeResponse(clientSocket, statusCode, body);
+        clientSocket.getOutputStream().write(response.getBytes());
     }
-        //shazo jobber med handleFileRequest
-        private boolean handleFileRequest(Socket clientSocket, String requestTarget) throws IOException {
-            try (InputStream inputtStream = getClass().getResourceAsStream(requestTarget)) {
-                if (inputtStream == null) {
-
-                    //displayed when there is nothing
-                    String body = requestTarget + "does not exist";
-                    String response = "HTTP/1.1 404 Not Found\r\n" +
-                            "Content-Length: " + body.length() + "\r\n" +
-                            "Connection: close\r\n" +
-                            "\r\n" +
-                            body;
-                    // the response will be returned as false
-                    clientSocket.getOutputStream().write(response.getBytes());
-
-                    return false;
-                }
-                ByteArrayOutputStream buffer = new ByteArrayOutputStream();
-                inputtStream.transferTo(buffer);
-
-                String contentType = "text/plain";
-                if (requestTarget.endsWith(".html")) {
-                    contentType = "text/html";
-                }
-
-                String response = "HTTP/1.1 200 OK\r\n" +
-                        "Content-Length: " + buffer.toByteArray().length + "\r\n" +
-                        "Connection: close\r\n" +
-                        "Content-Type: " + contentType + "\r\n" +
-                        "\r\n";
-                clientSocket.getOutputStream().write(response.getBytes());
-                clientSocket.getOutputStream().write(buffer.toByteArray());
-        }
-
-        File targetFile = new File(documentRoot, requestTarget);
-
-        if (!targetFile.exists()){
-            writeResponse(clientSocket, "404", requestTarget + " not found");
-            return true;
-        }
-
-        HttpMessage responseMessage = new HttpMessage("HTTP/1.1 200 OK");
-        responseMessage.setHeader("Content-Length", String.valueOf(targetFile.length()));
-        responseMessage.setHeader("Content-type", "text/html");
-
-        if (targetFile.getName().endsWith(".txt")) {
-            responseMessage.setHeader("Content-Type", "text/plain");
-        }
-
-        else if (targetFile.getName().endsWith(".css")) {
-            responseMessage.setHeader("Content-Type", "text/css");
-        }
-        responseMessage.write(clientSocket);
-
-        try(FileInputStream inputStream = new FileInputStream(targetFile)) {
-            inputStream.transferTo(clientSocket.getOutputStream());
-        }
-        return false;
-    }
-
-    private void writeResponse(Socket clientSocket, String statusCode, String body) throws IOException {
-        HttpMessage responseMessage = new HttpMessage("HTTP/1.1 " + statusCode + " OK");
-        responseMessage.setHeader("Content-Length", String.valueOf(body.length()));
-        responseMessage.setHeader("Content-Type", "text/plain");
-        responseMessage.write(clientSocket);
-        clientSocket.getOutputStream().write(body.getBytes());
-    }
-
+    
     public static void main(String[] args) throws IOException {
-        HttpServer server = new HttpServer(8080);
-        server.setDocumentRoot(new File("src/main/resources"));
+        Properties properties = new Properties();
+        try(FileReader fileReader = new FileReader("pgr203.properties")){
+            properties.load(fileReader);
+        }
+
+        PGSimpleDataSource dataSource = new PGSimpleDataSource();
+        dataSource.setUrl(properties.getProperty("dataSource.url"));
+        dataSource.setUser(properties.getProperty("dataSource.username"));
+        dataSource.setPassword(properties.getProperty("dataSource.password"));
+        logger.info("Using database {}", dataSource.getUrl());
+        Flyway.configure().dataSource(dataSource).load().migrate();
+
+        new HttpServer(8080, dataSource);
         logger.info("Started on http://localhost:{}/index.html", 8080);
     }
 
-    public void setDocumentRoot(File documentRoot) {
-        this.documentRoot = documentRoot;
-    }
-
-    public <E> List<String> getMemberNames() {
-        return memberNames;
+    public List<Product> getProductNames() throws SQLException{
+        return productDao.list();
     }
 }
