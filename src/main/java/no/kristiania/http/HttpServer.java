@@ -24,10 +24,12 @@ public class HttpServer {
 
     private final ProductDao productDao;
 
+    //constructor
     public HttpServer(int port, DataSource dataSource) throws IOException {
         productDao = new ProductDao(dataSource);
         ServerSocket serverSocket = new ServerSocket(port);
 
+        //socket is created and (accept) waits for the connection to be made and then starts
         new Thread(() -> {
             while (true) {
                 try {Socket clientSocket = serverSocket.accept();
@@ -45,7 +47,8 @@ public class HttpServer {
         String requestLine = request.getStartLine();
         System.out.println("REQUEST" + requestLine);
 
-        // The requestLine consists of a verb (GET, POST), a request target and HTTP version
+        // The requestLine consists of a verb such as GET, POST
+        // a request target and HTTP version
         String requestMethod = requestLine.split(" ")[0];
         String requestTarget = requestLine.split(" ")[1];
 
@@ -56,7 +59,7 @@ public class HttpServer {
         //Here we deal with POST /addMember
         if (requestMethod.equals("POST")) {
             QueryString requestParameter = new QueryString(request.getBody());
-
+            //structure for when listing out projectMembers
             Product product = new Product();
             product.setName(requestParameter.getParameter("productName"));
             product.setLastName(requestParameter.getParameter("lastName"));
@@ -79,9 +82,10 @@ public class HttpServer {
             }
         }
     }
-
+        //this will allow to read directly from file
     private void handleFileRequest(Socket clientSocket, String requestPath) throws IOException {
         try (InputStream inputStream = getClass().getResourceAsStream(requestPath)){
+            //handling null
             if (inputStream == null){
                 String body = requestPath + " does not exist";
                 String response = "HTTP/1.1 404 Not Found\r\n" +
@@ -92,6 +96,7 @@ public class HttpServer {
                 clientSocket.getOutputStream().write(response.getBytes());
                 return;
             }
+            //data will be put into byte array and buffer will increases the capacity of byte(if necessary)
             ByteArrayOutputStream buffer = new ByteArrayOutputStream();
             inputStream.transferTo(buffer);
 
@@ -151,13 +156,13 @@ public class HttpServer {
 
         clientSocket.getOutputStream().write(response.getBytes());
     }
-    
+    //main method
     public static void main(String[] args) throws IOException {
         Properties properties = new Properties();
         try(FileReader fileReader = new FileReader("pgr203.properties")){
             properties.load(fileReader);
         }
-
+        //refers to the file that contains the data source
         PGSimpleDataSource dataSource = new PGSimpleDataSource();
         dataSource.setUrl(properties.getProperty("dataSource.url"));
         dataSource.setUser(properties.getProperty("dataSource.username"));
@@ -168,7 +173,7 @@ public class HttpServer {
         new HttpServer(8080, dataSource);
         logger.info("Started on http://localhost:{}/index.html", 8080);
     }
-
+    //creating a variable
     public List<Product> getProductNames() throws SQLException{
         return productDao.list();
     }
