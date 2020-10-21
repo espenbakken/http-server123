@@ -11,14 +11,71 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
+import java.sql.Statement;
 
 public class ProductDao {
 
-    private DataSource dataSource;
+    private final DataSource dataSource;
 
     public ProductDao(DataSource dataSource) {
         this.dataSource = dataSource;
     }
+
+    public void insert(Product product) throws SQLException {
+        try (Connection connection = dataSource.getConnection()) {
+            try (PreparedStatement statement = connection.prepareStatement(
+                    "INSERT INTO products (product_name, price) values (?, ?)",
+                    Statement.RETURN_GENERATED_KEYS
+            )) {
+                statement.setString(1, product.getName());
+                statement.setDouble(2, product.getPrice());
+                statement.executeUpdate();
+
+                try (ResultSet generatedKeys = statement.getGeneratedKeys()) {
+                    generatedKeys.next();
+                    product.setId(generatedKeys.getLong("id"));
+                }
+            }
+        }
+    }
+
+    public Product retrieve(Long id) throws SQLException {
+        try (Connection connection = dataSource.getConnection()) {
+            try (PreparedStatement statement = connection.prepareStatement("SELECT * FROM products WHERE id = ?")) {
+                statement.setLong(1, id);
+                try (ResultSet rs = statement.executeQuery()) {
+                    if (rs.next()) {
+                        return mapRowToProduct(rs);
+                    } else {
+                        return null;
+                    }
+                }
+            }
+        }
+    }
+
+    private Product mapRowToProduct(ResultSet rs) throws SQLException {
+        Product product = new Product();
+        product.setId(rs.getLong("id"));
+        product.setName(rs.getString("product_name"));
+        product.setPrice(rs.getDouble("price"));
+        return product;
+    }
+
+    public List<Product> list() throws SQLException {
+        try (Connection connection = dataSource.getConnection()) {
+            try (PreparedStatement statement = connection.prepareStatement("SELECT * FROM products")) {
+                try (ResultSet rs = statement.executeQuery()) {
+                    List<Product> products = new ArrayList<>();
+                    while (rs.next()) {
+                        products.add(mapRowToProduct(rs));
+                    }
+                    return products;
+                }
+            }
+        }
+    }
+
 
     public static void main(String[] args) throws SQLException {
         PGSimpleDataSource dataSource = new PGSimpleDataSource();
@@ -30,39 +87,12 @@ public class ProductDao {
 
         System.out.println("Please enter product name:");
         Scanner scanner = new Scanner(System.in);
-        String productName = scanner.nextLine();
 
         Product product = new Product();
-        product.setName(productName);
+        product.setName(scanner.nextLine());
+
         productDao.insert(product);
-        for (Product p : productDao.list()) {
-            System.out.println(p);
-
-        }
-    }
-
-    public void insert(Product product) throws SQLException {
-        try (Connection connection = dataSource.getConnection()) {
-            try (PreparedStatement statement = connection.prepareStatement("INSERT INTO products (product_name) VALUES (?)")) {
-                statement.setString(1, product.getName());
-                statement.executeUpdate();
-            }
-        }
-    }
-
-    public List<Product> list() throws SQLException {
-        List<Product> products = new ArrayList<>();
-        try (Connection connection = dataSource.getConnection()) {
-            try (PreparedStatement statement = connection.prepareStatement("select * from products")) {
-                try (ResultSet rs = statement.executeQuery()) {
-                    while (rs.next()) {
-                        Product product = new Product();
-                        product.setName(rs.getString("product_name"));
-                        products.add(product);
-                    }
-                }
-            }
-        }
-        return products;
+        System.out.println(productDao.list());
     }
 }
+

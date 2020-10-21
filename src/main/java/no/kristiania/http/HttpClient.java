@@ -2,81 +2,57 @@ package no.kristiania.http;
 
 import java.io.IOException;
 import java.net.Socket;
+import java.util.HashMap;
+import java.util.Map;
 
 public class HttpClient {
 
+    private int statusCode;
     private String responseBody;
-    private final HttpMessage responseMessage;
+    private Map<String, String> responseHeaders = new HashMap<>();
 
     // Constructor - det som kalles når vi sier new
     public HttpClient(final String hostname, int port, final String requestTarget) throws IOException {
-        // Connect til serveren
-        Socket socket = new Socket(hostname, port);
-
-        // HTTP Request consists of request line + 0 or more request headers
-        //  request line consists of verb (GET, POST, PUT) request target ("/echo?status=404"), protocol (HTTP/1.1)
-        HttpMessage requestMessage = new HttpMessage("GET " + requestTarget + " HTTP/1.1");
-        requestMessage.setHeader("Host", hostname);
-        requestMessage.write(socket);
-
-        // The first line in the response is called the response line or status line
-        // response line consists of protocol ("HTTP/1.1") status code (200, 404, 401, 500) and status message
-
-
-        responseMessage = HttpMessage.read(socket);
-        responseBody = responseMessage.readBody(socket);
+        this(hostname, port, requestTarget, "GET", null);
     }
 
-    public HttpClient(String hostname, int port, String requestTarget, String method, QueryString form) throws IOException{
+    public HttpClient(final String hostname, int port, final String requestTarget, final String method, String requestBody) throws IOException {
         Socket socket = new Socket(hostname, port);
 
-        String requestBody = form.getQueryString();
+        String contentLengthHeader = requestBody != null ? "Content-Length: " + requestBody.length() + "\r\n" : "";
 
-        HttpMessage requestMessage = new HttpMessage(method + " " + requestTarget + " HTTP/1.1");
-        requestMessage.setHeader("Host", hostname);
-        requestMessage.setHeader("Content-Length", String.valueOf(requestBody.length()));
-        requestMessage.write(socket);
-        socket.getOutputStream().write(requestBody.getBytes());
+        String request = method + " " + requestTarget + " HTTP/1.1\r\n" +
+                "Host: " + hostname + "\r\n" +
+                contentLengthHeader +
+                "\r\n";
 
-        responseMessage = HttpMessage.read(socket);
-    }
-        /*
-        String[] responseLineParts = responseLine.split(" ");
-        responseMessage = new HttpMessage(responseLine);
+        socket.getOutputStream().write(request.getBytes());
 
-        // Status code determines if it went ok (2xx) or not (4xx). In addition: 5xx: server error) 3xx
-        int statusCode = Integer.parseInt(responseLineParts[1]);
-
-        String headerLine;
-        while (!(headerLine = HttpMessage.readLine(socket)).isEmpty()){
-         int colonPos = headerLine.indexOf(':');
-         String headerName = headerLine.substring(0, colonPos);
-         String headerValue = headerLine.substring(colonPos+1).trim();
-
-         responseMessage.setHeader(headerName, headerValue);
-            Map<String, String> responseHeaders = new HashMap<>();
-            responseHeaders.put(headerName, headerValue);
+        if (requestBody != null) {
+            socket.getOutputStream().write(requestBody.getBytes());
         }
 
+        HttpMessage response = new HttpMessage(socket);
 
-        // The Content-Length header tells us how many bytes in the response follow the headers
-        int contentLength = Integer.parseInt(getResponseHeader("Content-Length"));
-        // The next content-length bytes are called the response body
-        this.responseBody = HttpMessage.readBody(socket, contentLength);
-    }*/
+        String responseLine = response.getStartLine();
+        responseHeaders = response.getHeaders();
+        responseBody = response.getBody();
 
+        String[] responseLineParts = responseLine.split(" ");
+
+        statusCode = Integer.parseInt(responseLineParts[1]);
+    }
     public static void main(String[] args) throws IOException {
-        new HttpClient("urlecho.appspot.com", 80, "/echo?status=200&body=Hello%World!");
+        HttpClient client = new HttpClient("urlecho.appspot.com", 80, "/echo?status=404&Content-Type=text%2Fhtml&body=Hello+World");
+        System.out.println(client.getResponseBody());
     }
 
     public Object getStatusCode() {
-        String[] responseLineParts = responseMessage.getStartLine().split(" ");
-        int statusCode = Integer.parseInt(responseLineParts[1]);
         return statusCode;
     }
 
     public String getResponseHeader(String headerName) {
-        return responseMessage.getHeader(headerName);
+        return responseHeaders.get(headerName);
     }
 
     public String getResponseBody() {
