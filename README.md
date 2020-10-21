@@ -1,4 +1,3 @@
-![Java CI with Maven](https://github.com/kristiania/pgr203innevering3-espenbakken/workflows/Java%20CI%20with%20Maven/badge.svg)
 
 # Data Access Objects
 ## Innlevering 3 ![build](https://github.com/espenbakken/HTTP-Server/workflows/Java%20CI%20with%20Maven/badge.svg)
