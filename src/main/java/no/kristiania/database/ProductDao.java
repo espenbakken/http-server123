@@ -4,17 +4,14 @@ package no.kristiania.database;
 import org.postgresql.ds.PGSimpleDataSource;
 
 import javax.sql.DataSource;
-import java.io.FileReader;
-import java.io.IOException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Properties;
 import java.util.Scanner;
+import java.sql.Statement;
 
 public class ProductDao {
     //data source is used for connecting to the actual data source
@@ -24,20 +21,22 @@ public class ProductDao {
         this.dataSource = dataSource;
     }
 
-    public void insert(Product projectMembers) throws SQLException {
+    public void insert(Product product) throws SQLException {
         try (Connection connection = dataSource.getConnection()) {
             try (PreparedStatement statement = connection.prepareStatement(
-                    "INSERT INTO products (member_name, id) values (?, ?)",
-                    Statement.RETURN_GENERATED_KEYS)) {
+                    "INSERT INTO products (product_name, age, last_name, email) values (?, ?, ?, ?)",
+                    Statement.RETURN_GENERATED_KEYS
+            )) {
                 //getter and setter method
-                statement.setString(1, projectMembers.getName());
-                statement.setDouble(2, projectMembers.getId());
+                statement.setString(1, product.getName());
+                statement.setDouble(2, product.getAge());
+                statement.setString(3, product.getLastName());
+                statement.setString(4, product.getEmail());
                 statement.executeUpdate();
-
                 //setting the keys to id
                 try (ResultSet generatedKeys = statement.getGeneratedKeys()) {
                     generatedKeys.next();
-                    projectMembers.setId(generatedKeys.getLong("id"));
+                    product.setId(generatedKeys.getLong("id"));
                 }
             }
         }
@@ -46,7 +45,7 @@ public class ProductDao {
     public Product retrieve(Long id) throws SQLException {
         //connecting with a specific database and it gives information about the tables
         try (Connection connection = dataSource.getConnection()) {
-            try (PreparedStatement statement = connection.prepareStatement("SELECT * FROM product WHERE id = ?")) {
+            try (PreparedStatement statement = connection.prepareStatement("SELECT * FROM products WHERE id = ?")) {
                 statement.setLong(1, id);
                 try (ResultSet rs = statement.executeQuery()) {
                     if (rs.next()) {
@@ -60,52 +59,46 @@ public class ProductDao {
     }
     //creating a column of row in which the data will display/stored
     private Product mapRowToProduct(ResultSet rs) throws SQLException {
-        Product projectMembers = new Product();
-        projectMembers.setId(rs.getLong("id"));
-        projectMembers.setName(rs.getString("member_name"));
-        return projectMembers;
+        Product product = new Product();
+        product.setId(rs.getLong("id"));
+        product.setName(rs.getString("product_name"));
+        product.setLastName(rs.getString("last_name"));
+        product.setEmail(rs.getString("email"));
+        product.setAge(rs.getDouble("age"));
+        return product;
     }
 
     public List<Product> list() throws SQLException {
         try (Connection connection = dataSource.getConnection()) {
-            try (PreparedStatement statement = connection.prepareStatement("SELECT * FROM projectMembers")) {
+            try (PreparedStatement statement = connection.prepareStatement("SELECT * FROM products")) {
                 try (ResultSet rs = statement.executeQuery()) {
-                    List<Product> projectMember = new ArrayList<>();
+                    List<Product> products = new ArrayList<>();
                     while (rs.next()) {
-                        projectMember.add(mapRowToProduct(rs));
+                        products.add(mapRowToProduct(rs));
                     }
-                    return projectMember;
+                    return products;
                 }
             }
         }
     }
 
-    public static void main(String[] args) throws SQLException {
-        //to access the specified data, this properties and filereader is created
-        Properties properties = new Properties();
-        try (FileReader fileReader = new FileReader("pgr203.properties")) {
-            properties.load(fileReader);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        //should never commit the file that contains sensitive data
-        //therefore it is stored somewherelse
 
+    public static void main(String[] args) throws SQLException {
         PGSimpleDataSource dataSource = new PGSimpleDataSource();
-        dataSource.setUrl(properties.getProperty("dataSource.url"));
-        dataSource.setUser(properties.getProperty("dataSource.username"));
-        dataSource.setPassword(properties.getProperty("dataSource.password"));
+        dataSource.setUrl("jdbc:postgresql://localhost:5432/kristianiashop");
+        dataSource.setUser("kristianiashop");
+        dataSource.setPassword("sdlkgnslkawat");
 
         ProductDao productDao = new ProductDao(dataSource);
 
-        System.out.println("What's the name of the new projectMember");
+        System.out.println("Please enter product name:");
         Scanner scanner = new Scanner(System.in);
 
-        Product projectMember = new Product();
-        projectMember.setName(scanner.nextLine());
+        Product product = new Product();
+        product.setName(scanner.nextLine());
 
-        productDao.insert(projectMember);
+        productDao.insert(product);
         System.out.println(productDao.list());
     }
-
 }
+
