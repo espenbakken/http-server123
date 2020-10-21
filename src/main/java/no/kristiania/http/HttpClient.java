@@ -15,7 +15,7 @@ public class HttpClient {
     public HttpClient(final String hostname, int port, final String requestTarget) throws IOException {
         this(hostname, port, requestTarget, "GET", null);
     }
-
+    //HttpClient fetches the Hostname, por, requestTarget, method and requestBody.
     public HttpClient(final String hostname, int port, final String requestTarget, final String method, String requestBody) throws IOException {
         Socket socket = new Socket(hostname, port);
 
@@ -42,20 +42,21 @@ public class HttpClient {
 
         statusCode = Integer.parseInt(responseLineParts[1]);
     }
+    //Prints out client.GetResponseBody
     public static void main(String[] args) throws IOException {
         HttpClient client = new HttpClient("urlecho.appspot.com", 80, "/echo?status=404&Content-Type=text%2Fhtml&body=Hello+World");
         System.out.println(client.getResponseBody());
     }
-
+    //GetStatusCode returns statusCode
     public Object getStatusCode() {
         return statusCode;
     }
-
+    //getResponseHeader returns responseHeaders.get(headerName)
     public String getResponseHeader(String headerName) {
         return responseHeaders.get(headerName);
     }
-
+    //getResponseBody returns responseBody
     public String getResponseBody() {
         return responseBody;
     }
-}
+}//End class
