@@ -2,11 +2,12 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Hello World</title>
+    <title>PGR203 - Arbeidskrav #3</title>
 </head>
 <body>
-Hello World
+<h3>Eksisterende gruppemedlemmer</h3>
 <div id="products"></div>
+<a href="newProduct.html">Klikk her for å legge til nytt gruppemedlem</a>
 </body>
 <script>
     fetch("/api/products").then(response => response.text()).then(html => {

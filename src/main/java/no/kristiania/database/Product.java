@@ -2,7 +2,9 @@ package no.kristiania.database;
 
 public class Product {
     private String name;
-    private double price;
+    private String lastname;
+    private String email;
+    private double age;
     private Long id;
 
     public void setName(String name) {
@@ -13,11 +15,19 @@ public class Product {
         return name;
     }
 
-    public double getPrice() { return price;}
+    public double getAge() { return age; }
 
-    public Long getId(){ return id;}
+    public Long getId(){ return id; }
 
-    public void setId(Long id){ this.id = id;}
+    public void setId(Long id){ this.id = id; }
 
-    public void setPrice(double price) {this.price = price;}
+    public void setAge(double age) { this.age = age; }
+
+    public void setEmail(String email) { this.email = email; }
+
+    public void setLastName(String lastName) { this.lastname = lastName; }
+
+    public String getLastName(){ return lastname;}
+
+    public String getEmail() { return email; }
 }

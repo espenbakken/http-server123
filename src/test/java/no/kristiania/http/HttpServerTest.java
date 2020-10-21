@@ -89,7 +89,7 @@ class HttpServerTest {
     @Test
     void shouldPostNewProduct() throws IOException, SQLException {
         HttpServer server = new HttpServer(10008, dataSource);
-        HttpClient client = new HttpClient("localhost", 10008, "/api/newProduct", "POST", "productName=apples&price=10");
+        HttpClient client = new HttpClient("localhost", 10008, "/api/newProduct", "POST", "productName=apples&age=10");
         assertEquals(200, client.getStatusCode());
         assertThat(server.getProductNames())
                 .extracting(product -> product.getName())
@@ -101,10 +101,12 @@ class HttpServerTest {
         new HttpServer(10009, dataSource);
         ProductDao productDao = new ProductDao(dataSource);
         Product product = new Product();
-        product.setName("Coconuts");
-        product.setPrice(20);
+        product.setName("Espen");
+        product.setLastName("Bakken");
+        product.setAge(20);
+        product.setEmail("test@gmail.com");
         productDao.insert(product);
         HttpClient client = new HttpClient("localhost", 10009, "/api/products");
-        assertThat(client.getResponseBody()).contains("<li>Coconuts (kr 20.0)</li>");
+        assertThat(client.getResponseBody()).contains("<li>Espen Bakken<br>test@gmail.com</li>");
     }
 }
