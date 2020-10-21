@@ -2,21 +2,15 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Arbeidskrav PGR203 - Espen Bakken</title>
-    <link rel="stylesheet" type="text/css" href="style.css">
+    <title>Hello World</title>
 </head>
-    <body>
-    <div id="container" style="text-align: center; padding: 20px; margin:0 auto; width: 1000px; height: 1000%; background: gray; border-radius: 20px;">
-        <h1>Arbeidskrav #2</h1>
-        <h3>Project members:</h3>
-        <div id="projectMembers"></div>
-        <a href="newMember.html">Add new members to project</a>
-    </div>
-    </body>
-    <script>
-        const members = document.getElementById("projectMembers")
-        fetch("/api/members")
-            .then(resp => resp.text())
-            .then(html => members.innerHTML = html);
-    </script>
+<body>
+Hello World
+<div id="products"></div>
+</body>
+<script>
+    fetch("/api/products").then(response => response.text()).then(html => {
+        document.getElementById("products").innerHTML = html;
+    });
+</script>
 </html>
