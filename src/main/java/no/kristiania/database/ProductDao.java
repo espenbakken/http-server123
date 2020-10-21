@@ -27,7 +27,7 @@ public class ProductDao {
     public void insert(Product projectMembers) throws SQLException {
         try (Connection connection = dataSource.getConnection()) {
             try (PreparedStatement statement = connection.prepareStatement(
-                    "INSERT INTO products (member_name) values (?, ?)",
+                    "INSERT INTO projectMembers (member_name) values (?, ?)",
                     Statement.RETURN_GENERATED_KEYS
             )) {
                 statement.setString(1, projectMembers.getName());
