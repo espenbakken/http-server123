@@ -49,7 +49,9 @@ class ProductDaoTest {
     private Product exampleProduct() {
         Product product = new Product();
         product.setName(exampleProductName());
-        product.setPrice(10.50 + random.nextInt(20));
+        product.setAge((int) (10.50 + random.nextInt(20)));
+        product.setLastName(exampleProductName());
+        product.setEmail(exampleProductName());
         return product;
     }
 

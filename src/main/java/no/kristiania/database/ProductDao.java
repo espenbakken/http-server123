@@ -4,17 +4,14 @@ package no.kristiania.database;
 import org.postgresql.ds.PGSimpleDataSource;
 
 import javax.sql.DataSource;
-import java.io.FileReader;
-import java.io.IOException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Properties;
 import java.util.Scanner;
+import java.sql.Statement;
 
 public class ProductDao {
 
@@ -24,67 +21,82 @@ public class ProductDao {
         this.dataSource = dataSource;
     }
 
-    public void insert(Product projectMembers) throws SQLException {
+    public void insert(Product product) throws SQLException {
         try (Connection connection = dataSource.getConnection()) {
             try (PreparedStatement statement = connection.prepareStatement(
-                    "INSERT INTO products (member_name) values (?, ?)",
+                    "INSERT INTO products (product_name, age, last_name, email) values (?, ?, ?, ?)",
                     Statement.RETURN_GENERATED_KEYS
             )) {
-                statement.setString(1, projectMembers.getName());
+                statement.setString(1, product.getName());
+                statement.setDouble(2, product.getAge());
+                statement.setString(3, product.getLastName());
+                statement.setString(4, product.getEmail());
                 statement.executeUpdate();
 
                 try (ResultSet generatedKeys = statement.getGeneratedKeys()) {
                     generatedKeys.next();
+                    product.setId(generatedKeys.getLong("id"));
+                }
+            }
+        }
+    }
 
+    public Product retrieve(Long id) throws SQLException {
+        try (Connection connection = dataSource.getConnection()) {
+            try (PreparedStatement statement = connection.prepareStatement("SELECT * FROM products WHERE id = ?")) {
+                statement.setLong(1, id);
+                try (ResultSet rs = statement.executeQuery()) {
+                    if (rs.next()) {
+                        return mapRowToProduct(rs);
+                    } else {
+                        return null;
+                    }
                 }
             }
         }
     }
 
     private Product mapRowToProduct(ResultSet rs) throws SQLException {
-        Product projectMembers = new Product();
-        projectMembers.setName(rs.getString("member_name"));
-        return projectMembers;
+        Product product = new Product();
+        product.setId(rs.getLong("id"));
+        product.setName(rs.getString("product_name"));
+        product.setLastName(rs.getString("last_name"));
+        product.setEmail(rs.getString("email"));
+        product.setAge(rs.getDouble("age"));
+        return product;
     }
 
     public List<Product> list() throws SQLException {
         try (Connection connection = dataSource.getConnection()) {
-            try (PreparedStatement statement = connection.prepareStatement("SELECT * FROM projectMember")) {
+            try (PreparedStatement statement = connection.prepareStatement("SELECT * FROM products")) {
                 try (ResultSet rs = statement.executeQuery()) {
-                    List<Product> projectMember = new ArrayList<>();
+                    List<Product> products = new ArrayList<>();
                     while (rs.next()) {
-                        projectMember.add(mapRowToProduct(rs));
+                        products.add(mapRowToProduct(rs));
                     }
-                    return projectMember;
+                    return products;
                 }
             }
         }
     }
 
+
     public static void main(String[] args) throws SQLException {
-
-        Properties properties = new Properties();
-        try (FileReader fileReader = new FileReader("pgr203.properties")){
-        properties.load(fileReader);} catch (IOException e) {
-            e.printStackTrace();
-        }
-
         PGSimpleDataSource dataSource = new PGSimpleDataSource();
-        dataSource.setUrl(properties.getProperty("dataSource.url"));
-        dataSource.setUser(properties.getProperty("dataSource.username"));
-        // TODO: database passwords should never be checked in!
-        dataSource.setPassword(properties.getProperty("dataSource.password"));
+        dataSource.setUrl("jdbc:postgresql://localhost:5432/kristianiashop");
+        dataSource.setUser("kristianiashop");
+        dataSource.setPassword("sdlkgnslkawat");
 
         ProductDao productDao = new ProductDao(dataSource);
 
-        System.out.println("What's the name of the new projectMember");
+        System.out.println("Please enter product name:");
         Scanner scanner = new Scanner(System.in);
 
-        Product projectMember = new Product();
-        projectMember.setName(scanner.nextLine());
+        Product product = new Product();
+        product.setName(scanner.nextLine());
 
-        productDao.insert(projectMember);
+        productDao.insert(product);
         System.out.println(productDao.list());
     }
-
 }
+

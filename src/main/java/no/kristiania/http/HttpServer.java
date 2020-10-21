@@ -59,8 +59,10 @@ public class HttpServer {
 
             Product product = new Product();
             product.setName(requestParameter.getParameter("productName"));
+            product.setLastName(requestParameter.getParameter("lastName"));
+            product.setEmail(requestParameter.getParameter("email"));
             productDao.insert(product);
-            String body = "Okay";
+            String body = "Gruppemedlem er lagt til i databasen!";
             String response = "HTTP/1.1 200 OK\r\n" +
                     "Connection: close\r\n" +
                     "Content-Length: " + body.length() + "\r\n" +
@@ -110,8 +112,12 @@ public class HttpServer {
 
     private void handleGetProducts(Socket clientSocket) throws IOException, SQLException {
         String body = "<ul>";
+
+
         for (Product product : productDao.list()) {
-            body += "<li>" + product.getName() + " (kr " + product.getPrice() + ")</li>";
+
+            body += "<li>" + product.getName() + " " + product.getLastName() + "<br>" +
+                product.getEmail() + "</li>";
         }
         body += "</ul>";
         String response = "HTTP/1.1 200 OK\r\n" +
