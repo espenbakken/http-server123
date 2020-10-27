@@ -13,43 +13,43 @@ import java.util.List;
 import java.util.Scanner;
 import java.sql.Statement;
 
-public class ProductDao {
+public class MemberDao {
     //data source is used for connecting to the actual data source
     private final DataSource dataSource;
 
-    public ProductDao(DataSource dataSource) {
+    public MemberDao(DataSource dataSource) {
         this.dataSource = dataSource;
     }
 
-    public void insert(Product product) throws SQLException {
+    public void insert(Member member) throws SQLException {
         try (Connection connection = dataSource.getConnection()) {
             try (PreparedStatement statement = connection.prepareStatement(
-                    "INSERT INTO members (product_name, age, last_name, email) values (?, ?, ?, ?)",
+                    "INSERT INTO members (member_name, age, last_name, email) values (?, ?, ?, ?)",
                     Statement.RETURN_GENERATED_KEYS
             )) {
                 //getter and setter method
-                statement.setString(1, product.getName());
-                statement.setDouble(2, product.getAge());
-                statement.setString(3, product.getLastName());
-                statement.setString(4, product.getEmail());
+                statement.setString(1, member.getName());
+                statement.setDouble(2, member.getAge());
+                statement.setString(3, member.getLastName());
+                statement.setString(4, member.getEmail());
                 statement.executeUpdate();
                 //setting the keys to id
                 try (ResultSet generatedKeys = statement.getGeneratedKeys()) {
                     generatedKeys.next();
-                    product.setId(generatedKeys.getLong("id"));
+                    member.setId(generatedKeys.getLong("id"));
                 }
             }
         }
     }
 
-    public Product retrieve(Long id) throws SQLException {
+    public Member retrieve(Long id) throws SQLException {
         //connecting with a specific database and it gives information about the tables
         try (Connection connection = dataSource.getConnection()) {
             try (PreparedStatement statement = connection.prepareStatement("SELECT * FROM members WHERE id = ?")) {
                 statement.setLong(1, id);
                 try (ResultSet rs = statement.executeQuery()) {
                     if (rs.next()) {
-                        return mapRowToProduct(rs);
+                        return mapRowToMember(rs);
                     } else {
                         return null;
                     }
@@ -58,23 +58,23 @@ public class ProductDao {
         }
     }
     //creating a column of row in which the data will display/stored
-    private Product mapRowToProduct(ResultSet rs) throws SQLException {
-        Product product = new Product();
-        product.setId(rs.getLong("id"));
-        product.setName(rs.getString("product_name"));
-        product.setLastName(rs.getString("last_name"));
-        product.setEmail(rs.getString("email"));
-        product.setAge(rs.getDouble("age"));
-        return product;
+    private Member mapRowToMember(ResultSet rs) throws SQLException {
+        Member member = new Member();
+        member.setId(rs.getLong("id"));
+        member.setName(rs.getString("member_name"));
+        member.setLastName(rs.getString("last_name"));
+        member.setEmail(rs.getString("email"));
+        member.setAge(rs.getDouble("age"));
+        return member;
     }
 
-    public List<Product> list() throws SQLException {
+    public List<Member> list() throws SQLException {
         try (Connection connection = dataSource.getConnection()) {
             try (PreparedStatement statement = connection.prepareStatement("SELECT * FROM members")) {
                 try (ResultSet rs = statement.executeQuery()) {
-                    List<Product> members = new ArrayList<>();
+                    List<Member> members = new ArrayList<>();
                     while (rs.next()) {
-                        members.add(mapRowToProduct(rs));
+                        members.add(mapRowToMember(rs));
                     }
                     return members;
                 }
@@ -89,16 +89,16 @@ public class ProductDao {
         dataSource.setUser("kristianiashop");
         dataSource.setPassword("sdlkgnslkawat");
 
-        ProductDao productDao = new ProductDao(dataSource);
+        MemberDao memberDao = new MemberDao(dataSource);
 
-        System.out.println("Please enter product name:");
+        System.out.println("Please enter member name:");
         Scanner scanner = new Scanner(System.in);
 
-        Product product = new Product();
-        product.setName(scanner.nextLine());
+        Member member = new Member();
+        member.setName(scanner.nextLine());
 
-        productDao.insert(product);
-        System.out.println(productDao.list());
+        memberDao.insert(member);
+        System.out.println(memberDao.list());
     }
 }
 

@@ -1,7 +1,7 @@
 package no.kristiania.http;
 
-import no.kristiania.database.Product;
-import no.kristiania.database.ProductDao;
+import no.kristiania.database.Member;
+import no.kristiania.database.MemberDao;
 import org.flywaydb.core.Flyway;
 import org.h2.jdbcx.JdbcDataSource;
 import org.junit.jupiter.api.BeforeEach;
@@ -87,25 +87,25 @@ class HttpServerTest {
     }
 
     @Test
-    void shouldPostNewProduct() throws IOException, SQLException {
+    void shouldPostNewMember() throws IOException, SQLException {
         HttpServer server = new HttpServer(10008, dataSource);
-        HttpClient client = new HttpClient("localhost", 10008, "/api/newProduct", "POST", "productName=apples&age=10");
+        HttpClient client = new HttpClient("localhost", 10008, "/api/newMember", "POST", "memberName=apples&age=10");
         assertEquals(200, client.getStatusCode());
-        assertThat(server.getProductNames())
-                .extracting(product -> product.getName())
+        assertThat(server.getmemberNames())
+                .extracting(member -> member.getName())
                 .contains("apples");
     }
 
     @Test
-    void shouldReturnExistingmembers() throws IOException, SQLException {
+    void shouldReturnExistingMembers() throws IOException, SQLException {
         new HttpServer(10009, dataSource);
-        ProductDao productDao = new ProductDao(dataSource);
-        Product product = new Product();
-        product.setName("Espen");
-        product.setLastName("Bakken");
-        product.setAge(20);
-        product.setEmail("test@gmail.com");
-        productDao.insert(product);
+        MemberDao memberDao = new MemberDao(dataSource);
+        Member member = new Member();
+        member.setName("Espen");
+        member.setLastName("Bakken");
+        member.setAge(20);
+        member.setEmail("test@gmail.com");
+        memberDao.insert(member);
         HttpClient client = new HttpClient("localhost", 10009, "/api/members");
         assertThat(client.getResponseBody()).contains("<li>Espen Bakken<br>test@gmail.com</li>");
     }

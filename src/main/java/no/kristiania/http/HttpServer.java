@@ -1,7 +1,7 @@
 package no.kristiania.http;
 
-import no.kristiania.database.Product;
-import no.kristiania.database.ProductDao;
+import no.kristiania.database.Member;
+import no.kristiania.database.MemberDao;
 import org.flywaydb.core.Flyway;
 import org.postgresql.ds.PGSimpleDataSource;
 import org.slf4j.Logger;
@@ -22,10 +22,10 @@ public class HttpServer {
 
     private static final Logger logger = LoggerFactory.getLogger(HttpServer.class);
 
-    private final ProductDao productDao;
+    private final MemberDao memberDao;
 
     public HttpServer(int port, DataSource dataSource) throws IOException {
-        productDao = new ProductDao(dataSource);
+        memberDao = new MemberDao(dataSource);
         ServerSocket serverSocket = new ServerSocket(port);
 
         new Thread(() -> {
@@ -57,11 +57,11 @@ public class HttpServer {
         if (requestMethod.equals("POST")) {
             QueryString requestParameter = new QueryString(request.getBody());
 
-            Product product = new Product();
-            product.setName(requestParameter.getParameter("productName"));
-            product.setLastName(requestParameter.getParameter("lastName"));
-            product.setEmail(requestParameter.getParameter("email"));
-            productDao.insert(product);
+            Member member = new Member();
+            member.setName(requestParameter.getParameter("memberName"));
+            member.setLastName(requestParameter.getParameter("lastName"));
+            member.setEmail(requestParameter.getParameter("email"));
+            memberDao.insert(member);
             String body = "Gruppemedlem er lagt til i databasen!";
             String response = "HTTP/1.1 200 OK\r\n" +
                     "Connection: close\r\n" +
@@ -114,10 +114,10 @@ public class HttpServer {
         String body = "<ul>";
 
 
-        for (Product product : productDao.list()) {
+        for (Member member : memberDao.list()) {
 
-            body += "<li>" + product.getName() + " " + product.getLastName() + "<br>" +
-                product.getEmail() + "</li>";
+            body += "<li>" + member.getName() + " " + member.getLastName() + "<br>" +
+                member.getEmail() + "</li>";
         }
         body += "</ul>";
         String response = "HTTP/1.1 200 OK\r\n" +
@@ -169,7 +169,7 @@ public class HttpServer {
         logger.info("Started on http://localhost:{}/index.html", 8080);
     }
 
-    public List<Product> getProductNames() throws SQLException{
-        return productDao.list();
+    public List<Member> getmemberNames() throws SQLException{
+        return memberDao.list();
     }
 }
