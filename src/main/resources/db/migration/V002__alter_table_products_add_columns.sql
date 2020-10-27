@@ -1,2 +1,2 @@
-alter table products add column id serial primary key;
-alter table products add column age numeric(10,2);
+alter table members add column id serial primary key;
+alter table members add column age numeric(10,2);

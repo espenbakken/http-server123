@@ -1,3 +1,3 @@
-create table products (
+create table members (
     product_name varchar
 )

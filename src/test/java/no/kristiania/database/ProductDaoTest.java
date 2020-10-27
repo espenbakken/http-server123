@@ -24,7 +24,7 @@ class ProductDaoTest {
     }
 
     @Test
-    void shouldListInsertedProducts() throws SQLException {
+    void shouldListInsertedmembers() throws SQLException {
         Product product1 = exampleProduct();
         Product product2 = exampleProduct();
         productDao.insert(product1);

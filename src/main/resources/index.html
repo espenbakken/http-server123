@@ -6,12 +6,12 @@
 </head>
 <body>
 <h3>Eksisterende gruppemedlemmer</h3>
-<div id="products"></div>
+<div id="members"></div>
 <a href="newProduct.html">Klikk her for å legge til nytt gruppemedlem</a>
 </body>
 <script>
-    fetch("/api/products").then(response => response.text()).then(html => {
-        document.getElementById("products").innerHTML = html;
+    fetch("/api/members").then(response => response.text()).then(html => {
+        document.getElementById("members").innerHTML = html;
     });
 </script>
 </html>

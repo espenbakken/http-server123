@@ -1,2 +1,2 @@
-alter table products add column last_name varchar;
-alter table products add column email varchar;
+alter table members add column last_name varchar;
+alter table members add column email varchar;

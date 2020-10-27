@@ -24,7 +24,7 @@ public class ProductDao {
     public void insert(Product product) throws SQLException {
         try (Connection connection = dataSource.getConnection()) {
             try (PreparedStatement statement = connection.prepareStatement(
-                    "INSERT INTO products (product_name, age, last_name, email) values (?, ?, ?, ?)",
+                    "INSERT INTO members (product_name, age, last_name, email) values (?, ?, ?, ?)",
                     Statement.RETURN_GENERATED_KEYS
             )) {
                 //getter and setter method
@@ -45,7 +45,7 @@ public class ProductDao {
     public Product retrieve(Long id) throws SQLException {
         //connecting with a specific database and it gives information about the tables
         try (Connection connection = dataSource.getConnection()) {
-            try (PreparedStatement statement = connection.prepareStatement("SELECT * FROM products WHERE id = ?")) {
+            try (PreparedStatement statement = connection.prepareStatement("SELECT * FROM members WHERE id = ?")) {
                 statement.setLong(1, id);
                 try (ResultSet rs = statement.executeQuery()) {
                     if (rs.next()) {
@@ -70,13 +70,13 @@ public class ProductDao {
 
     public List<Product> list() throws SQLException {
         try (Connection connection = dataSource.getConnection()) {
-            try (PreparedStatement statement = connection.prepareStatement("SELECT * FROM products")) {
+            try (PreparedStatement statement = connection.prepareStatement("SELECT * FROM members")) {
                 try (ResultSet rs = statement.executeQuery()) {
-                    List<Product> products = new ArrayList<>();
+                    List<Product> members = new ArrayList<>();
                     while (rs.next()) {
-                        products.add(mapRowToProduct(rs));
+                        members.add(mapRowToProduct(rs));
                     }
-                    return products;
+                    return members;
                 }
             }
         }

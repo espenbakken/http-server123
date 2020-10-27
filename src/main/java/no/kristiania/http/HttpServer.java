@@ -72,8 +72,8 @@ public class HttpServer {
         } else {
             if (requestPath.equals("/echo")) {
                 handleEchoRequest(clientSocket, requestTarget, questionPos);
-            } else if (requestPath.equals("/api/products")) {
-                handleGetProducts(clientSocket);
+            } else if (requestPath.equals("/api/members")) {
+                handleGetmembers(clientSocket);
             } else {
                 handleFileRequest(clientSocket, requestPath);
             }
@@ -110,7 +110,7 @@ public class HttpServer {
         }
     }
 
-    private void handleGetProducts(Socket clientSocket) throws IOException, SQLException {
+    private void handleGetmembers(Socket clientSocket) throws IOException, SQLException {
         String body = "<ul>";
 
 

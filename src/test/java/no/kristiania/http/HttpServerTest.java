@@ -97,7 +97,7 @@ class HttpServerTest {
     }
 
     @Test
-    void shouldReturnExistingProducts() throws IOException, SQLException {
+    void shouldReturnExistingmembers() throws IOException, SQLException {
         new HttpServer(10009, dataSource);
         ProductDao productDao = new ProductDao(dataSource);
         Product product = new Product();
@@ -106,7 +106,7 @@ class HttpServerTest {
         product.setAge(20);
         product.setEmail("test@gmail.com");
         productDao.insert(product);
-        HttpClient client = new HttpClient("localhost", 10009, "/api/products");
+        HttpClient client = new HttpClient("localhost", 10009, "/api/members");
         assertThat(client.getResponseBody()).contains("<li>Espen Bakken<br>test@gmail.com</li>");
     }
 }
