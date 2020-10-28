@@ -1,7 +1,7 @@
 package no.kristiania.http;
 
-import no.kristiania.database.Product;
-import no.kristiania.database.ProductDao;
+import no.kristiania.database.Member;
+import no.kristiania.database.MemberDao;
 import org.flywaydb.core.Flyway;
 import org.postgresql.ds.PGSimpleDataSource;
 import org.slf4j.Logger;
@@ -22,14 +22,12 @@ public class HttpServer {
 
     private static final Logger logger = LoggerFactory.getLogger(HttpServer.class);
 
-    private final ProductDao productDao;
+    private final MemberDao memberDao;
 
-    //constructor
     public HttpServer(int port, DataSource dataSource) throws IOException {
-        productDao = new ProductDao(dataSource);
+        memberDao = new MemberDao(dataSource);
         ServerSocket serverSocket = new ServerSocket(port);
 
-        //socket is created and (accept) waits for the connection to be made and then starts
         new Thread(() -> {
             while (true) {
                 try {Socket clientSocket = serverSocket.accept();
@@ -47,8 +45,7 @@ public class HttpServer {
         String requestLine = request.getStartLine();
         System.out.println("REQUEST" + requestLine);
 
-        // The requestLine consists of a verb such as GET, POST
-        // a request target and HTTP version
+        // The requestLine consists of a verb (GET, POST), a request target and HTTP version
         String requestMethod = requestLine.split(" ")[0];
         String requestTarget = requestLine.split(" ")[1];
 
@@ -59,12 +56,12 @@ public class HttpServer {
         //Here we deal with POST /addMember
         if (requestMethod.equals("POST")) {
             QueryString requestParameter = new QueryString(request.getBody());
-            //structure for when listing out projectMembers
-            Product product = new Product();
-            product.setName(requestParameter.getParameter("productName"));
-            product.setLastName(requestParameter.getParameter("lastName"));
-            product.setEmail(requestParameter.getParameter("email"));
-            productDao.insert(product);
+
+            Member member = new Member();
+            member.setName(requestParameter.getParameter("memberName"));
+            member.setLastName(requestParameter.getParameter("lastName"));
+            member.setEmail(requestParameter.getParameter("email"));
+            memberDao.insert(member);
             String body = "Gruppemedlem er lagt til i databasen!";
             String response = "HTTP/1.1 200 OK\r\n" +
                     "Connection: close\r\n" +
@@ -75,17 +72,16 @@ public class HttpServer {
         } else {
             if (requestPath.equals("/echo")) {
                 handleEchoRequest(clientSocket, requestTarget, questionPos);
-            } else if (requestPath.equals("/api/products")) {
-                handleGetProducts(clientSocket);
+            } else if (requestPath.equals("/api/members")) {
+                handleGetmembers(clientSocket);
             } else {
                 handleFileRequest(clientSocket, requestPath);
             }
         }
     }
-        //this will allow to read directly from file
+
     private void handleFileRequest(Socket clientSocket, String requestPath) throws IOException {
         try (InputStream inputStream = getClass().getResourceAsStream(requestPath)){
-            //handling null
             if (inputStream == null){
                 String body = requestPath + " does not exist";
                 String response = "HTTP/1.1 404 Not Found\r\n" +
@@ -96,7 +92,6 @@ public class HttpServer {
                 clientSocket.getOutputStream().write(response.getBytes());
                 return;
             }
-            //data will be put into byte array and buffer will increases the capacity of byte(if necessary)
             ByteArrayOutputStream buffer = new ByteArrayOutputStream();
             inputStream.transferTo(buffer);
 
@@ -115,14 +110,14 @@ public class HttpServer {
         }
     }
 
-    private void handleGetProducts(Socket clientSocket) throws IOException, SQLException {
+    private void handleGetmembers(Socket clientSocket) throws IOException, SQLException {
         String body = "<ul>";
 
 
-        for (Product product : productDao.list()) {
+        for (Member member : memberDao.list()) {
 
-            body += "<li>" + product.getName() + " " + product.getLastName() + "<br>" +
-                product.getEmail() + "</li>";
+            body += "<li>" + member.getName() + " " + member.getLastName() + "<br>" +
+                member.getEmail() + "</li>";
         }
         body += "</ul>";
         String response = "HTTP/1.1 200 OK\r\n" +
@@ -156,13 +151,13 @@ public class HttpServer {
 
         clientSocket.getOutputStream().write(response.getBytes());
     }
-    //main method
+    
     public static void main(String[] args) throws IOException {
         Properties properties = new Properties();
         try(FileReader fileReader = new FileReader("pgr203.properties")){
             properties.load(fileReader);
         }
-        //refers to the file that contains the data source
+
         PGSimpleDataSource dataSource = new PGSimpleDataSource();
         dataSource.setUrl(properties.getProperty("dataSource.url"));
         dataSource.setUser(properties.getProperty("dataSource.username"));
@@ -173,8 +168,8 @@ public class HttpServer {
         new HttpServer(8080, dataSource);
         logger.info("Started on http://localhost:{}/index.html", 8080);
     }
-    //creating a variable
-    public List<Product> getProductNames() throws SQLException{
-        return productDao.list();
+
+    public List<Member> getmemberNames() throws SQLException{
+        return memberDao.list();
     }
 }

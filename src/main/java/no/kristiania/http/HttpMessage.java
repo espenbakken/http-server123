@@ -12,6 +12,7 @@ public class HttpMessage {
 
     public HttpMessage(Socket socket) throws IOException{
         startLine = readLine(socket);
+
         headers = readHeaders(socket);
 
         String contentLength = headers.get("Content-Length");
@@ -29,7 +30,7 @@ public class HttpMessage {
             // Each line is terminated by CRLF (carriage return, line feed)
             // or \r\n
             if(c == '\r') {
-                socket.getInputStream().read(); // if \n after \r then break
+                socket.getInputStream().read(); // Read the \n after \r
                 break;
             }
             line.append((char)c);
@@ -53,14 +54,14 @@ public class HttpMessage {
             // Each header consists of name: value
             int colonPos = headerLine.indexOf(':');
             String headerName = headerLine.substring(0, colonPos);
-            // making sure that the extra space is terminated by trim
+            // Spaces at the beginning and end of the header value should be ignored
             String headerValue = headerLine.substring(colonPos+1).trim();
 
             headers.put(headerName, headerValue);
         }
         return headers;
     }
-        //variables
+
     public String getStartLine() {
         return startLine;
     }

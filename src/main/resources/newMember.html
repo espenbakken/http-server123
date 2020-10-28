@@ -1,21 +1,8 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <!--using UTF-8. title set to "Arbeidskrav PGR203 - New Member". Linked this file with Style.css. Page language is in English.-->
-    <meta charset="UTF-8">
-    <title>Arbeidskrav PGR203 - New Member</title>
-    <link rel="stylesheet" type="text/css" href="style.css">
-</head>
-<body>
-<!--Container is styled for visual purposes. Added some text and a button. And a link to go back to the front page (aka Index-page)-->
-<div id="container" style="text-align: center; padding: 20px; margin:0 auto; width: 1000px; height: 1000%; background: gray; border-radius: 20px;">
-    <h1>Arbeidskrav #2</h1>
-    <h3>Add new member</h3>
-    <form method="POST" action="/addMember">
-        <p>Name <input name="memberName"></p>
-        <p><button>Add new member to project</button></p>
+<div>
+    <form method="post" action="/api/newMember">
+        <p>Fornavn: <input name="memberName"/></p>
+        <p>Etternavn: <input name="lastName"></p>
+        <p>Epost: <input name="email"></p>
+        <p><button>Submit</button></p>
     </form>
-    <a href="index.html">Go back to frontpage</a>
 </div>
-</body>
-</html>
