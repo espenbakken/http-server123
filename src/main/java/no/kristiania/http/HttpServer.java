@@ -59,6 +59,7 @@ public class HttpServer {
 
             Member member = new Member();
             member.setName(requestParameter.getParameter("memberName"));
+            member.setAge(Double.parseDouble(requestParameter.getParameter("age")));
             member.setLastName(requestParameter.getParameter("lastName"));
             member.setEmail(requestParameter.getParameter("email"));
             memberDao.insert(member);
@@ -116,7 +117,7 @@ public class HttpServer {
 
         for (Member member : memberDao.list()) {
 
-            body += "<li>" + member.getName() + " " + member.getLastName() + "<br>" +
+            body += "<li>" + member.getName() + " " + member.getLastName() + "(" + String.format("%.0f", member.getAge()) + ")" + "<br>" +
                 member.getEmail() + "</li>";
         }
         body += "</ul>";
@@ -169,7 +170,7 @@ public class HttpServer {
         logger.info("Started on http://localhost:{}/index.html", 8080);
     }
 
-    public List<Member> getMemberNames() throws SQLException{
+    public List<Member> getMembers() throws SQLException{
         return memberDao.list();
     }
 }

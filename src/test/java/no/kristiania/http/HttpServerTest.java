@@ -89,11 +89,15 @@ class HttpServerTest {
     @Test
     void shouldPostNewMember() throws IOException, SQLException {
         HttpServer server = new HttpServer(10008, dataSource);
-        HttpClient client = new HttpClient("localhost", 10008, "/api/newMember", "POST", "memberName=apples&age=10");
+        String requestBody = "memberName=apples&age=10";
+        HttpClient client = new HttpClient("localhost", 10008, "/api/newMember", "POST", requestBody);
         assertEquals(200, client.getStatusCode());
-        assertThat(server.getMemberNames())
-                .extracting(member -> member.getName())
-                .contains("apples");
+        assertThat(server.getMembers())
+                .filteredOn(member -> member.getName().equals("apples"))
+                .isNotEmpty()
+                .satisfies(p -> assertThat(p.get(0).getAge()).isEqualTo(10));
+               /* .extracting(member -> member.getName())
+                .contains("apples");*/
     }
 
     @Test
@@ -107,6 +111,6 @@ class HttpServerTest {
         member.setEmail("test@gmail.com");
         memberDao.insert(member);
         HttpClient client = new HttpClient("localhost", 10009, "/api/members");
-        assertThat(client.getResponseBody()).contains("<li>Espen Bakken<br>test@gmail.com</li>");
+        assertThat(client.getResponseBody()).contains("<li>Espen Bakken(20)<br>test@gmail.com</li>");
     }
 }
