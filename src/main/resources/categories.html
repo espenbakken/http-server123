@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Categories // Kristianiashop</title>
+</head>
+<body>
+<h1>Categories:</h1>
+<div id="categories"></div>
+</body>
+<script>
+    fetch("/api/categories").then(response => response.text()).then(html => {
+        document.getElementById("categories").innerHTML = html;
+    });
+</script>
+</html>

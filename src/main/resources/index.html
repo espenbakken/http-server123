@@ -2,16 +2,18 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>PGR203 - Arbeidskrav #3</title>
+    <title>PGR203 - Eksamen</title>
 </head>
 <body>
-<h3>Eksisterende gruppemedlemmer</h3>
-<div id="members"></div>
-<a href="newMember.html">Klikk her for å legge til nytt gruppemedlem</a>
+<h3>Velkommen</h3>
+
+<h4>Meny</h4>
+<ul>
+    <li><a href="/members.html">List members</a></li>
+    <li><a href="/newMember.html">New member</a></li>
+    <li><a href="/categories.html">Categories</a></li>
+    <li><a href="/newCategory.html">New category</a></li>
+
+</ul>
 </body>
-<script>
-    fetch("/api/members").then(response => response.text()).then(html => {
-        document.getElementById("members").innerHTML = html;
-    });
-</script>
 </html>
