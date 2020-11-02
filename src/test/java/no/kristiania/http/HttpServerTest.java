@@ -91,7 +91,7 @@ class HttpServerTest {
         HttpServer server = new HttpServer(10008, dataSource);
         HttpClient client = new HttpClient("localhost", 10008, "/api/newMember", "POST", "memberName=apples&age=10");
         assertEquals(200, client.getStatusCode());
-        assertThat(server.getmemberNames())
+        assertThat(server.getMemberNames())
                 .extracting(member -> member.getName())
                 .contains("apples");
     }

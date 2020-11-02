@@ -73,7 +73,7 @@ public class HttpServer {
             if (requestPath.equals("/echo")) {
                 handleEchoRequest(clientSocket, requestTarget, questionPos);
             } else if (requestPath.equals("/api/members")) {
-                handleGetmembers(clientSocket);
+                handleGetMembers(clientSocket);
             } else {
                 handleFileRequest(clientSocket, requestPath);
             }
@@ -110,7 +110,7 @@ public class HttpServer {
         }
     }
 
-    private void handleGetmembers(Socket clientSocket) throws IOException, SQLException {
+    private void handleGetMembers(Socket clientSocket) throws IOException, SQLException {
         String body = "<ul>";
 
 
@@ -169,7 +169,7 @@ public class HttpServer {
         logger.info("Started on http://localhost:{}/index.html", 8080);
     }
 
-    public List<Member> getmemberNames() throws SQLException{
+    public List<Member> getMemberNames() throws SQLException{
         return memberDao.list();
     }
 }

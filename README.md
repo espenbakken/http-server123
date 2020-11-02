@@ -1,6 +1,6 @@
 
 # Data Access Objects
-## Innlevering 3 ![build](https://github.com/espenbakken/HTTP-Server/workflows/Java%20CI%20with%20Maven/badge.svg)
+## Eksamen ![build](https://github.com/espenbakken/HTTP-Server/workflows/Java%20CI%20with%20Maven/badge.svg)
 ### Gruppe 28
 - Espen Bakken
 - Bahast Agha
@@ -19,4 +19,6 @@ ved kjøring av `java -jar ...jar`
 -- --
 Du finner en properties fil med verdier for `dataSource.url`, `dataSource.username`. `dataSource.password`
 i folderen. 
+
+![Server Structure](docs/server_structure.png)
 
