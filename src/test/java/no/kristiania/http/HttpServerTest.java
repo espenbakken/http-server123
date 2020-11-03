@@ -100,7 +100,7 @@ class HttpServerTest {
                 .contains("apples");*/
     }
 
-    @Test
+   @Test
     void shouldReturnExistingMembers() throws IOException, SQLException {
         new HttpServer(10009, dataSource);
         MemberDao memberDao = new MemberDao(dataSource);

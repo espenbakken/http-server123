@@ -116,7 +116,6 @@ public class HttpServer {
 
 
         for (Member member : memberDao.list()) {
-
             body += "<li>" + member.getName() + " " + member.getLastName() + "(" + String.format("%.0f", member.getAge()) + ")" + "<br>" +
                 member.getEmail() + "</li>";
         }
