@@ -2,6 +2,7 @@ package no.kristiania.http;
 
 import no.kristiania.database.Member;
 import no.kristiania.database.MemberDao;
+import no.kristiania.database.ProductCategory;
 import org.flywaydb.core.Flyway;
 import org.postgresql.ds.PGSimpleDataSource;
 import org.slf4j.Logger;
@@ -16,11 +17,17 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.sql.SQLException;
 import java.util.List;
+import java.util.Map;
 import java.util.Properties;
 
 public class HttpServer {
 
     private static final Logger logger = LoggerFactory.getLogger(HttpServer.class);
+
+    private Map<String, ControllerMcControllerface> controllers = Map.of(
+            "/api/newCategory", new ProductCategoryPostController(),
+            "/api/categories", new ProductCategoryGetController()
+    );
 
     private final MemberDao memberDao;
 
@@ -55,30 +62,49 @@ public class HttpServer {
 
         //Here we deal with POST /addMember
         if (requestMethod.equals("POST")) {
-            QueryString requestParameter = new QueryString(request.getBody());
+            if (requestPath.equals("/api/newMember")){
+                handlePostProduct(clientSocket, request);
+            } else{
+                getController(requestPath).handle(request, clientSocket);
 
-            Member member = new Member();
-            member.setName(requestParameter.getParameter("memberName"));
-            member.setAge(Double.parseDouble(requestParameter.getParameter("age")));
-            member.setLastName(requestParameter.getParameter("lastName"));
-            member.setEmail(requestParameter.getParameter("email"));
-            memberDao.insert(member);
-            String body = "Gruppemedlem er lagt til i databasen!";
-            String response = "HTTP/1.1 200 OK\r\n" +
-                    "Connection: close\r\n" +
-                    "Content-Length: " + body.length() + "\r\n" +
-                    "\r\n" +
-                    body;
-            clientSocket.getOutputStream().write(response.getBytes());
+            }
+
         } else {
             if (requestPath.equals("/echo")) {
                 handleEchoRequest(clientSocket, requestTarget, questionPos);
             } else if (requestPath.equals("/api/members")) {
                 handleGetMembers(clientSocket);
             } else {
-                handleFileRequest(clientSocket, requestPath);
+                ControllerMcControllerface controller = controllers.get(requestPath);
+                if (controller != null){
+                    controller.handle(request, clientSocket);
+                }else {
+                    handleFileRequest(clientSocket, requestPath);
+                }
             }
         }
+    }
+
+    private ControllerMcControllerface getController(String requestPath) {
+        return controllers.get(requestPath);
+    }
+
+    private void handlePostProduct(Socket clientSocket, HttpMessage request) throws SQLException, IOException {
+        QueryString requestParameter = new QueryString(request.getBody());
+
+        Member member = new Member();
+        member.setName(requestParameter.getParameter("memberName"));
+        member.setAge(Double.parseDouble(requestParameter.getParameter("age")));
+        member.setLastName(requestParameter.getParameter("lastName"));
+        member.setEmail(requestParameter.getParameter("email"));
+        memberDao.insert(member);
+        String body = "Gruppemedlem er lagt til i databasen!";
+        String response = "HTTP/1.1 200 OK\r\n" +
+                "Connection: close\r\n" +
+                "Content-Length: " + body.length() + "\r\n" +
+                "\r\n" +
+                body;
+        clientSocket.getOutputStream().write(response.getBytes());
     }
 
     private void handleFileRequest(Socket clientSocket, String requestPath) throws IOException {
