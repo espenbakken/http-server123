@@ -1,6 +1,5 @@
 package no.kristiania.http;
 
-import no.kristiania.database.Member;
 import no.kristiania.database.ProductCategory;
 import no.kristiania.database.ProductCategoryDao;
 
@@ -24,7 +23,7 @@ public class ProductCategoryPostController implements ControllerMcControllerface
         category.setName(requestParameter.getParameter("categoryName"));
         productCategoryDao.insert(category);
 
-        String body = "Gruppemedlem er lagt til i databasen!";
+        String body = "Ny kategori er lagt til!";
         String response = "HTTP/1.1 200 OK\r\n" +
                 "Connection: close\r\n" +
                 "Content-Length: " + body.length() + "\r\n" +

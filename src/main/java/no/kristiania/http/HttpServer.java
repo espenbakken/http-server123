@@ -2,7 +2,6 @@ package no.kristiania.http;
 
 import no.kristiania.database.Member;
 import no.kristiania.database.MemberDao;
-import no.kristiania.database.ProductCategory;
 import no.kristiania.database.ProductCategoryDao;
 import org.flywaydb.core.Flyway;
 import org.postgresql.ds.PGSimpleDataSource;
