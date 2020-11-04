@@ -24,7 +24,7 @@ public class HttpServer {
 
     private static final Logger logger = LoggerFactory.getLogger(HttpServer.class);
 
-    private Map<String, ControllerMcControllerface> controllers;
+    private Map<String, HttpController> controllers;
 
     private final MemberDao memberDao;
     private final ServerSocket serverSocket;
@@ -87,7 +87,7 @@ public class HttpServer {
             } else if (requestPath.equals("/api/members")) {
                 handleGetMembers(clientSocket);
             } else {
-                ControllerMcControllerface controller = controllers.get(requestPath);
+                HttpController controller = controllers.get(requestPath);
                 if (controller != null){
                     controller.handle(request, clientSocket);
                 }else {
@@ -97,7 +97,7 @@ public class HttpServer {
         }
     }
 
-    private ControllerMcControllerface getController(String requestPath) {
+    private HttpController getController(String requestPath) {
         return controllers.get(requestPath);
     }
 
@@ -137,6 +137,10 @@ public class HttpServer {
             String contentType = "text/plain";
             if (requestPath.endsWith(".html")) {
                 contentType = "text/html";
+            }
+
+            if (requestPath.endsWith(".ico")) {
+                contentType = "image/png";
             }
 
             String response = "HTTP/1.1 200 OK\r\n" +
