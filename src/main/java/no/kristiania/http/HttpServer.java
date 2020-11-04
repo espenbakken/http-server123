@@ -3,6 +3,7 @@ package no.kristiania.http;
 import no.kristiania.database.Member;
 import no.kristiania.database.MemberDao;
 import no.kristiania.database.ProductCategory;
+import no.kristiania.database.ProductCategoryDao;
 import org.flywaydb.core.Flyway;
 import org.postgresql.ds.PGSimpleDataSource;
 import org.slf4j.Logger;
@@ -24,15 +25,19 @@ public class HttpServer {
 
     private static final Logger logger = LoggerFactory.getLogger(HttpServer.class);
 
-    private Map<String, ControllerMcControllerface> controllers = Map.of(
-            "/api/newCategory", new ProductCategoryPostController(),
-            "/api/categories", new ProductCategoryGetController()
-    );
+    private Map<String, ControllerMcControllerface> controllers;
 
     private final MemberDao memberDao;
 
     public HttpServer(int port, DataSource dataSource) throws IOException {
         memberDao = new MemberDao(dataSource);
+        ProductCategoryDao productCategoryDao = new ProductCategoryDao(dataSource);
+
+        controllers = Map.of(
+                "/api/newCategory", new ProductCategoryPostController(productCategoryDao),
+                "/api/categories", new ProductCategoryGetController(productCategoryDao)
+        );
+
         ServerSocket serverSocket = new ServerSocket(port);
 
         new Thread(() -> {
@@ -44,6 +49,7 @@ public class HttpServer {
                 }
             }
         }).start();
+
     }
 
     private void handleRequest(Socket clientSocket) throws IOException, SQLException {
