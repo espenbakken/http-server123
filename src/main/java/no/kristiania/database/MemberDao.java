@@ -1,8 +1,6 @@
 package no.kristiania.database;
 
 
-import org.postgresql.ds.PGSimpleDataSource;
-
 import javax.sql.DataSource;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -10,15 +8,12 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Scanner;
 import java.sql.Statement;
 
-public class MemberDao {
-    //data source is used for connecting to the actual data source
-    private final DataSource dataSource;
+public class MemberDao extends AbstractDao<Member> {
 
     public MemberDao(DataSource dataSource) {
-        this.dataSource = dataSource;
+        super(dataSource);
     }
 
     public void insert(Member member) throws SQLException {
@@ -43,29 +38,7 @@ public class MemberDao {
     }
 
     public Member retrieve(Long id) throws SQLException {
-        //connecting with a specific database and it gives information about the tables
-        try (Connection connection = dataSource.getConnection()) {
-            try (PreparedStatement statement = connection.prepareStatement("SELECT * FROM members WHERE id = ?")) {
-                statement.setLong(1, id);
-                try (ResultSet rs = statement.executeQuery()) {
-                    if (rs.next()) {
-                        return mapRowToMember(rs);
-                    } else {
-                        return null;
-                    }
-                }
-            }
-        }
-    }
-    //creating a column of row in which the data will display/stored
-    private Member mapRowToMember(ResultSet rs) throws SQLException {
-        Member member = new Member();
-        member.setId(rs.getLong("id"));
-        member.setName(rs.getString("member_name"));
-        member.setLastName(rs.getString("last_name"));
-        member.setEmail(rs.getString("email"));
-        member.setAge(rs.getDouble("age"));
-        return member;
+        return retrieve(id, "SELECT * FROM members WHERE id = ?");
     }
 
     public List<Member> list() throws SQLException {
@@ -74,7 +47,7 @@ public class MemberDao {
                 try (ResultSet rs = statement.executeQuery()) {
                     List<Member> members = new ArrayList<>();
                     while (rs.next()) {
-                        members.add(mapRowToMember(rs));
+                        members.add(mapRow(rs));
                     }
                     return members;
                 }
@@ -82,23 +55,16 @@ public class MemberDao {
         }
     }
 
-
-    public static void main(String[] args) throws SQLException {
-        PGSimpleDataSource dataSource = new PGSimpleDataSource();
-        dataSource.setUrl("jdbc:postgresql://localhost:5432/kristianiashop");
-        dataSource.setUser("kristianiashop");
-        dataSource.setPassword("sdlkgnslkawat");
-
-        MemberDao memberDao = new MemberDao(dataSource);
-
-        System.out.println("Please enter member name:");
-        Scanner scanner = new Scanner(System.in);
-
+    //creating a column of row in which the data will display/stored
+    @Override
+    protected Member mapRow(ResultSet rs) throws SQLException {
         Member member = new Member();
-        member.setName(scanner.nextLine());
-
-        memberDao.insert(member);
-        System.out.println(memberDao.list());
+        member.setId(rs.getLong("id"));
+        member.setName(rs.getString("member_name"));
+        member.setLastName(rs.getString("last_name"));
+        member.setEmail(rs.getString("email"));
+        member.setAge(rs.getDouble("age"));
+        return member;
     }
 }
 
