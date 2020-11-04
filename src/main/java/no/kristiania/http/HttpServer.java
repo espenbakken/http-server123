@@ -40,6 +40,7 @@ public class HttpServer {
         );
 
         serverSocket = new ServerSocket(port);
+        logger.info("Server started on port {}", serverSocket.getLocalPort());
 
         new Thread(() -> {
             while (true) {
