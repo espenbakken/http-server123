@@ -27,8 +27,10 @@ public class HttpServer {
     private Map<String, ControllerMcControllerface> controllers;
 
     private final MemberDao memberDao;
+    private final ServerSocket serverSocket;
 
     public HttpServer(int port, DataSource dataSource) throws IOException {
+
         memberDao = new MemberDao(dataSource);
         ProductCategoryDao productCategoryDao = new ProductCategoryDao(dataSource);
 
@@ -37,7 +39,7 @@ public class HttpServer {
                 "/api/categories", new ProductCategoryGetController(productCategoryDao)
         );
 
-        ServerSocket serverSocket = new ServerSocket(port);
+        serverSocket = new ServerSocket(port);
 
         new Thread(() -> {
             while (true) {
@@ -49,6 +51,10 @@ public class HttpServer {
             }
         }).start();
 
+    }
+
+    public int getPort() {
+        return serverSocket.getLocalPort();
     }
 
     private void handleRequest(Socket clientSocket) throws IOException, SQLException {
