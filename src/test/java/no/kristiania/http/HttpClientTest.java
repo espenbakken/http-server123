@@ -11,25 +11,29 @@ public class HttpClientTest {
 
     @Test
     void shouldReturnSuccessfulStatusCode() throws IOException{
-        HttpClient client = new HttpClient("urlecho.appspot.com", 80, "/echo");
+        HttpClient client = createEchoRequest("/echo");
         assertEquals(200, client.getStatusCode());
     }
 
     @Test
     void shouldReturnErrorfulStatusCode() throws IOException{
-        HttpClient client = new HttpClient("urlecho.appspot.com", 80, "/echo?status=404");
+        HttpClient client = createEchoRequest("/echo?status=404");
         assertEquals(404, client.getStatusCode());
     }
 
     @Test
     void shouldReadResponseHeader() throws IOException{
-        HttpClient client = new HttpClient("urlecho.appspot.com", 80, "/echo?body=Kristiania");
+        HttpClient client = createEchoRequest("/echo?body=Kristiania");
         assertEquals("10", client.getResponseHeader("Content-Length"));
     }
 
     @Test
     void shouldReadResponseBody() throws IOException{
-        HttpClient client = new HttpClient("urlecho.appspot.com", 80, "/echo?body=Kristiania");
+        HttpClient client = createEchoRequest("/echo?body=Kristiania");
         assertEquals("Kristiania", client.getResponseBody());
+    }
+
+    private HttpClient createEchoRequest(String requestTarget) throws IOException {
+        return new HttpClient("urlecho.appspot.com", 80, requestTarget);
     }
 }
