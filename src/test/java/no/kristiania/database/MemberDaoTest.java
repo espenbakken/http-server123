@@ -1,11 +1,14 @@
 package no.kristiania.database;
 
+import no.kristiania.http.HttpMessage;
 import no.kristiania.http.ProductOptionsController;
+import no.kristiania.http.UpdateProductController;
 import org.flywaydb.core.Flyway;
 import org.h2.jdbcx.JdbcDataSource;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.io.IOException;
 import java.sql.SQLException;
 import java.util.Random;
 
@@ -15,6 +18,7 @@ public class MemberDaoTest {
 
     private MemberDao memberDao;
     private static Random random = new Random();
+    private ProductCategoryDao categoryDao;
 
     @BeforeEach
     void setUp() {
@@ -22,6 +26,7 @@ public class MemberDaoTest {
         dataSource.setUrl("jdbc:h2:mem:test;DB_CLOSE_DELAY=-1");
         Flyway.configure().dataSource(dataSource).load().migrate();
         memberDao = new MemberDao(dataSource);
+        categoryDao = new ProductCategoryDao(dataSource);
     }
 
     @Test
@@ -41,7 +46,7 @@ public class MemberDaoTest {
         memberDao.insert(exampleMember());
         Member member = exampleMember();
         memberDao.insert(member);
-        assertThat(member).hasNoNullFieldsOrProperties();
+        assertThat(member).hasNoNullFieldsOrPropertiesExcept("categoryId");
         assertThat(memberDao.retrieve(member.getId()))
                 .usingRecursiveComparison()
                 .isEqualTo(member);
@@ -55,6 +60,24 @@ public class MemberDaoTest {
 
         assertThat(controller.getBody())
                 .contains("<option value=" + member.getId() + ">" + member.getName() + "</option>");
+    }
+
+    @Test
+    void shouldUpdateExistingProductWithNewCategory() throws IOException, SQLException {
+        UpdateProductController controller = new UpdateProductController(memberDao);
+
+        Member member = exampleMember();
+        memberDao.insert(member);
+
+        ProductCategory category = CategoryDaoTest.exampleCategory();
+        categoryDao.insert(category);
+
+        String body = "memberId=" + member.getId() + "&categoryId=" + category.getId();
+        controller.handle(new HttpMessage(body), null);
+
+        assertThat(memberDao.retrieve(member.getId()).getCategoryId())
+                .isEqualTo(category.getId());
+
     }
 
     public static Member exampleMember() {

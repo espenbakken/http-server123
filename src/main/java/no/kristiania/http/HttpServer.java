@@ -38,7 +38,8 @@ public class HttpServer {
                 "/api/newCategory", new ProductCategoryPostController(productCategoryDao),
                 "/api/categories", new ProductCategoryGetController(productCategoryDao),
                 "/api/categoryOptions", new ProductCategoryOptionsController(productCategoryDao),
-                "/api/memberOptions", new ProductOptionsController(memberDao)
+                "/api/memberOptions", new ProductOptionsController(memberDao),
+                "/api/updateMember", new UpdateProductController(memberDao)
         );
 
         serverSocket = new ServerSocket(port);

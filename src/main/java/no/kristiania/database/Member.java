@@ -6,6 +6,7 @@ public class Member {
     private String email;
     private double age;
     private Long id;
+    private Long categoryId;
 
     public void setName(String name) {
         this.name = name;
@@ -30,4 +31,12 @@ public class Member {
     public String getLastName(){ return lastname;}
 
     public String getEmail() { return email; }
+
+    public Long getCategoryId() {
+        return categoryId;
+    }
+
+    public void setCategoryId(Long categoryId) {
+        this.categoryId = categoryId;
+    }
 }
