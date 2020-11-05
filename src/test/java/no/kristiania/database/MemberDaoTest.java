@@ -73,11 +73,13 @@ public class MemberDaoTest {
         categoryDao.insert(category);
 
         String body = "memberId=" + member.getId() + "&categoryId=" + category.getId();
-        controller.handle(new HttpMessage(body), null);
+
+        HttpMessage response = controller.handle(new HttpMessage(body));
 
         assertThat(memberDao.retrieve(member.getId()).getCategoryId())
                 .isEqualTo(category.getId());
-
+        assertThat(response.getStartLine())
+                .isEqualTo("HTTP/1.1 200 OK");
     }
 
     public static Member exampleMember() {

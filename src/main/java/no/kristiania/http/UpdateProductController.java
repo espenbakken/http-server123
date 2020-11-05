@@ -14,8 +14,7 @@ public class UpdateProductController implements HttpController{
         this.memberDao = memberDao;
     }
 
-    @Override
-    public void handle(HttpMessage request, Socket clientSocket) throws IOException, SQLException {
+    public HttpMessage handle(HttpMessage request) throws SQLException {
         QueryString requestParameter = new QueryString(request.getBody());
 
         Integer memberId = Integer.valueOf(requestParameter.getParameter("memberId"));
@@ -24,6 +23,12 @@ public class UpdateProductController implements HttpController{
         member.setCategoryId(categoryId);
 
         memberDao.update(member);
+
+        return new HttpMessage("Okay");
+    }
+
+    @Override
+    public void handle(HttpMessage request, Socket clientSocket) throws IOException, SQLException {
 
     }
 }
