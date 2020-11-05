@@ -37,6 +37,10 @@ public class MemberDao extends AbstractDao<Member> {
         }
     }
 
+    public void update(Member member) {
+
+    }
+
     public Member retrieve(Long id) throws SQLException {
         return retrieve(id, "SELECT * FROM members WHERE id = ?");
     }
@@ -66,5 +70,7 @@ public class MemberDao extends AbstractDao<Member> {
         member.setAge(rs.getDouble("age"));
         return member;
     }
+
+
 }
 
