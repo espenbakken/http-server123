@@ -14,6 +14,12 @@ public class UpdateProductController implements HttpController{
         this.memberDao = memberDao;
     }
 
+    @Override
+    public void handle(HttpMessage request, Socket clientSocket) throws IOException, SQLException {
+        HttpMessage response = handle(request);
+        response.write(clientSocket);
+    }
+
     public HttpMessage handle(HttpMessage request) throws SQLException {
         QueryString requestParameter = new QueryString(request.getBody());
 
@@ -24,11 +30,12 @@ public class UpdateProductController implements HttpController{
 
         memberDao.update(member);
 
-        return new HttpMessage("Okay");
+        HttpMessage redirect = new HttpMessage();
+        redirect.setStartLine("HTTP/1.1 302 Redirect");
+        redirect.getHeaders().put("Location", "http://localhost:8080/index.html");
+
+        return redirect;
     }
 
-    @Override
-    public void handle(HttpMessage request, Socket clientSocket) throws IOException, SQLException {
 
-    }
 }
