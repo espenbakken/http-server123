@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Edit member // Kristianiashop</title>
+</head>
+<body>
+    <h2>Edit member</h2>
+
+    <form method="post" action="/api/updateMember">
+        <p>Member: <select name="memberId" id="memberId"></select></p>
+        <p>New Category: <select name="categoryId" id="categoryId"></select></p>
+        <button>Submit</button>
+    </form>
+</body>
+
+<script>
+    fetch("/api/memberOptions").then(response => response.text()).then(html => {
+        document.getElementById("memberId").innerHTML = html;
+    });
+    fetch("/api/categoryOptions").then(response => response.text()).then(html => {
+        document.getElementById("categoryId").innerHTML = html;
+    });
+</script>
+
+</html>

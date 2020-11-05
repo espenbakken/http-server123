@@ -10,10 +10,10 @@ import java.util.Random;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-class MemberDaoTest {
+public class MemberDaoTest {
 
     private MemberDao memberDao;
-    private Random random = new Random();
+    private static Random random = new Random();
 
     @BeforeEach
     void setUp() {
@@ -46,7 +46,7 @@ class MemberDaoTest {
                 .isEqualTo(member);
     }
 
-    private Member exampleMember() {
+    public static Member exampleMember() {
         Member member = new Member();
         member.setName(exampleMemberName());
         member.setAge((int) (10.50 + random.nextInt(20)));
@@ -56,7 +56,7 @@ class MemberDaoTest {
     }
 
 
-    private String exampleMemberName() {
+    private static String exampleMemberName() {
         String[] options = {"Apples", "Bananas", "Coconuts", "Dates"};
         return options[random.nextInt(options.length)];
     }

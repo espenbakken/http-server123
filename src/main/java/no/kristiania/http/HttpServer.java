@@ -36,7 +36,9 @@ public class HttpServer {
 
         controllers = Map.of(
                 "/api/newCategory", new ProductCategoryPostController(productCategoryDao),
-                "/api/categories", new ProductCategoryGetController(productCategoryDao)
+                "/api/categories", new ProductCategoryGetController(productCategoryDao),
+                "/api/categoryOptions", new ProductCategoryOptionsController(productCategoryDao),
+                "/api/memberOptions", new ProductOptionsController(memberDao)
         );
 
         serverSocket = new ServerSocket(port);
@@ -141,6 +143,10 @@ public class HttpServer {
 
             if (requestPath.endsWith(".ico")) {
                 contentType = "image/png";
+            }
+
+            if (requestPath.endsWith(".css")) {
+                contentType = "text/css";
             }
 
             String response = "HTTP/1.1 200 OK\r\n" +
