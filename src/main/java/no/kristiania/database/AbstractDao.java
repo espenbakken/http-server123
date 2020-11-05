@@ -14,7 +14,7 @@ public abstract class AbstractDao<T> {
         this.dataSource = dataSource;
     }
 
-    protected T retrieve(Long id, String sql) throws SQLException {
+    protected T retrieve(Integer id, String sql) throws SQLException {
         //connecting with a specific database and it gives information about the tables
         try (Connection connection = dataSource.getConnection()) {
             try (PreparedStatement statement = connection.prepareStatement(sql)) {

@@ -1,0 +1,1 @@
+alter table members add column category_id integer null references product_categories(id);

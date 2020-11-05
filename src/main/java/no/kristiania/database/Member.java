@@ -5,8 +5,8 @@ public class Member {
     private String lastname;
     private String email;
     private double age;
-    private Long id;
-    private Long categoryId;
+    private Integer id;
+    private Integer categoryId;
 
     public void setName(String name) {
         this.name = name;
@@ -18,9 +18,9 @@ public class Member {
 
     public double getAge() { return age; }
 
-    public Long getId(){ return id; }
+    public Integer getId(){ return id; }
 
-    public void setId(Long id){ this.id = id; }
+    public void setId(Integer id){ this.id = id; }
 
     public void setAge(double age) { this.age = age; }
 
@@ -32,11 +32,11 @@ public class Member {
 
     public String getEmail() { return email; }
 
-    public Long getCategoryId() {
+    public Integer getCategoryId() {
         return categoryId;
     }
 
-    public void setCategoryId(Long categoryId) {
+    public void setCategoryId(Integer categoryId) {
         this.categoryId = categoryId;
     }
 }
