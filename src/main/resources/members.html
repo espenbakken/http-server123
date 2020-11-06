@@ -2,11 +2,33 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Members // Kristianiashop</title>
+    <title>Prosjektstyringsverktøy</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="icon" href="images/favicon.ico" type="image/x-icon" />
+    <script src="https://kit.fontawesome.com/ccc4be94bb.js" crossorigin="anonymous"></script>
 </head>
 <body>
-    <h1>Existing members:</h1>
-    <div id="members"></div>
+    <div id="container">
+        <div id="header">
+            <h1><i class="fas fa-tasks"></i>Prosjektstyringsverktøy</h1>
+        </div>
+        <div id="menu">
+            <ul>
+                <li><i class="fas fa-user-plus"></i><a href="/newMember.html">Legg til nytt medlem</a></li>
+                <li><i class="fas fa-plus-circle"></i><a href="/newCategory.html">Legg til ny oppgave</a></li>
+                <br>
+                <li><i class="fas fa-hand-point-right"></i><a href="/editMember.html">Tildel oppgaver</a></li>
+                <br>
+                <li><i class="fas fa-users"></i><a href="/members.html">List prosjektmedlemmer</a></li>
+                <li><i class="fas fa-check"></i><a href="/categories.html">List oppgaver</a></li>
+                
+            </ul>
+        </div>
+        <div id="content">
+            <h1>Existing members:</h1>
+            <div id="members"></div>
+        </div>
+    </div>
 </body>
 <script>
     fetch("/api/members").then(response => response.text()).then(html => {

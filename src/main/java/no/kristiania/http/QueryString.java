@@ -6,6 +6,7 @@ import java.util.Map;
 public class QueryString {
     private final Map<String, String> parameters = new LinkedHashMap<>();
 //Her må det decodes
+    //String result = java.net.URLDecoder.decode(member.getEmail(), StandardCharsets.UTF_8.name());
     public QueryString(String queryString) {
         if (queryString.isEmpty()) return;
         for (String parameter : queryString.split("&")) {

@@ -2,23 +2,38 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>PGR203 - Eksamen</title>
-    <link rel="stylesheet" href="/style.css">
+    <title>Prosjektstyringsverktøy</title>
+    <link rel="stylesheet" href="style.css">
     <link rel="icon" href="images/favicon.ico" type="image/x-icon" />
+    <script src="https://kit.fontawesome.com/ccc4be94bb.js" crossorigin="anonymous"></script>
 </head>
 <body>
     <div id="container">
         <div id="header">
-            <h1>Velkommen</h1>
+            <h1><i class="fas fa-tasks"></i>Prosjektstyringsverktøy</h1>
         </div>
         <div id="menu">
-            <h4>Meny</h4>
             <ul>
-                <li><a href="/members.html">List members</a></li>
-                <li><a href="/newMember.html">New member</a></li>
-                <li><a href="/editMember.html">Edit member</a></li>
-                <li><a href="/categories.html">Categories</a></li>
-                <li><a href="/newCategory.html">New category</a></li>
+                <li><i class="fas fa-user-plus"></i><a href="/newMember.html">Legg til nytt medlem</a></li>
+                <li><i class="fas fa-plus-circle"></i><a href="/newCategory.html">Legg til ny oppgave</a></li>
+                <br>
+                <li><i class="fas fa-hand-point-right"></i><a href="/editMember.html">Tildel oppgaver</a></li>
+                <br>
+                <li><i class="fas fa-users"></i><a href="/members.html">List prosjektmedlemmer</a></li>
+                <li><i class="fas fa-check"></i><a href="/categories.html">List oppgaver</a></li>
+                
+            </ul>
+        </div>
+        <div id="content">
+            <h2>Velkommen!</h2><br><br>
+            <p>Dette er vår eksamensinnlevering i faget PGR203, Avansert Java. Løsningen er et prosjektstyringsverktøy med følgende funksjonalitet:</p>
+            <ul>
+                <li>Opprette prosjektmedlem med navn og email</li>
+                <li>Liste prosjektmedlemmer</li>
+                <li>Opprette ny prosjektoppgave med navn og status</li>
+                <li>Tildele oppgaver til prosjektmedlemmer</li>
+                <li>Endre oppgavestatus</li>
+                <li>Filtrere oppgaver per prosjektmedlem og status</li>
             </ul>
         </div>
     </div>

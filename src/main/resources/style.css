@@ -4,45 +4,79 @@
 }
 
 body {
-    background-color: white;
+    background-color:#8DBECC;
 }
 
 #container{
     width: 1000px;
-    height: 100%;
-    background-color: gray;
+    height: auto;
+    background-color:#58767F;
     border-radius: 10px;
     margin: 20px auto 0;
     padding: 20px;
+    border: 1px solid #386F7F;
+    position: relative;
+    -webkit-box-shadow: 10px 10px 30px -5px rgba(0,0,0,0.7);
+    -moz-box-shadow: 10px 10px 30px -5px rgba(0,0,0,0.7);
+    box-shadow: 10px 10px 30px -5px rgba(0,0,0,0.7);
 }
 
 #header{
     width: 100%;
     height: 50px;
     position: relative;
-    border-bottom: 3px dotted black;
+    border-bottom: 3px dotted #8DBECC;
     text-align: center;
+    position: relative;
 }
 
 #menu{
-    width: 100%;
+    width: 160px;
+    border-right: 3px dotted #8DBECC;
     height: auto;
     margin-top: 20px;
+    left: 10px;
+    position: absolute;
+    padding: 10px;
 }
 
+#content{
+    width: 800px;
+    height: 400px;
+    position: relative;
+    left: 200px;
+    padding: 20px;
+}
+
+#content li{
+    list-style-type: square;
+}
+
+h1, h2, h3, h4, h5, h6, li, p{
+    color: #8DBECC;
+}
+
+
+
 a{
-    color: black;
+    color: #8DBECC;
+    text-decoration: none;
 }
 
 a:visited{
-    color: black;
+    color: #8DBECC;
 }
 
 a:hover{
-    color: gray;
+    color: black;
 }
 
 li{
     list-style-type: none;
     padding-top: 10px;
+}
+
+i{
+    color: #8DBECC;
+    margin-right: 3px;
 }
