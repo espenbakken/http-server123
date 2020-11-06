@@ -70,6 +70,10 @@ public class MemberDao extends AbstractDao<Member> {
         }
     }
 
+    public List<Member> queryMembersByCategoryId(Integer categoryId) {
+        return null;
+    }
+
     //creating a column of row in which the data will display/stored
     @Override
     protected Member mapRow(ResultSet rs) throws SQLException {
@@ -82,6 +86,7 @@ public class MemberDao extends AbstractDao<Member> {
         member.setAge(rs.getDouble("age"));
         return member;
     }
+
 
 
 }

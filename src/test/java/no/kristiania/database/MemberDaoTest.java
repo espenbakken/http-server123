@@ -8,6 +8,7 @@ import org.h2.jdbcx.JdbcDataSource;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.awt.event.PaintEvent;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.Random;
@@ -38,6 +39,27 @@ public class MemberDaoTest {
         assertThat(memberDao.list())
                 .extracting(Member::getName)
                 .contains(member1.getName(), member2.getName());
+    }
+
+    @Test
+    void shouldQueryMembersByCategory() throws SQLException {
+        ProductCategory category = CategoryDaoTest.exampleCategory();
+        categoryDao.insert(category);
+
+        ProductCategory otherCategory = CategoryDaoTest.exampleCategory();
+        categoryDao.insert(otherCategory);
+
+        Member matchingMember = exampleMember();
+        matchingMember.setCategoryId(category.getId());
+        memberDao.insert(matchingMember);
+        Member nonMatchingMember = exampleMember();
+        nonMatchingMember.setCategoryId(otherCategory.getId());
+        memberDao.insert(nonMatchingMember);
+
+        assertThat(memberDao.queryMembersByCategoryId(category.getId()))
+                .extracting(Member::getId)
+                .contains(matchingMember.getId())
+                .doesNotContain(nonMatchingMember.getId());
     }
 
     @Test
