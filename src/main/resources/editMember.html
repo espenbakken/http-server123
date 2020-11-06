@@ -17,7 +17,7 @@
                 <li><i class="fas fa-user-plus"></i><a href="/newMember.html">Legg til nytt medlem</a></li>
                 <li><i class="fas fa-plus-circle"></i><a href="/newCategory.html">Legg til ny oppgave</a></li>
                 <br>
-                <li><i class="fas fa-hand-point-right"></i><a href="/editMember.html">Tildel oppgaver</a></li>
+                <li><i class="fas fa-hand-point-right"></i><a href="/editMember.html"><u>Tildel oppgaver</u></a></li>
                 <br>
                 <li><i class="fas fa-users"></i><a href="/members.html">List prosjektmedlemmer</a></li>
                 <li><i class="fas fa-check"></i><a href="/categories.html">List oppgaver</a></li>
@@ -28,8 +28,8 @@
             <h2>Tildel oppgaver</h2>
 
             <form method="post" action="/api/updateMember">
-                <p>Member: <select name="memberId" id="memberId"></select></p>
-                <p>New Category: <select name="categoryId" id="categoryId"></select></p>
+                <p>Prosjektmedlem: <select name="memberId" id="memberId"></select></p>
+                <p>Oppgave: <select name="categoryId" id="categoryId"></select></p>
                 <button>Submit</button>
             </form>
         </div>

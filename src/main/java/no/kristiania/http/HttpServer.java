@@ -88,7 +88,7 @@ public class HttpServer {
             if (requestPath.equals("/echo")) {
                 handleEchoRequest(clientSocket, requestTarget, questionPos);
             } else if (requestPath.equals("/api/members")) {
-                handleGetMembers(clientSocket);
+                handleGetMembers(clientSocket, requestTarget, questionPos);
             } else {
                 HttpController controller = controllers.get(requestPath);
                 if (controller != null){
@@ -160,7 +160,7 @@ public class HttpServer {
         }
     }
 
-    private void handleGetMembers(Socket clientSocket) throws IOException, SQLException {
+    private void handleGetMembers(Socket clientSocket, String requestTarget, int questionPos) throws IOException, SQLException {
         String body = "<ul>";
 
 

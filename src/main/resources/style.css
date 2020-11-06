@@ -80,3 +80,21 @@ i{
     color: #8DBECC;
     margin-right: 3px;
 }
+
+input{
+    width: 200px;
+    height: 30px;
+    margin-left: 20px;
+    margin-top: 5px;
+}
+
+input:hover{
+    background: gray;
+}
+
+button{
+    width: 80px;
+    height: 30px;
+    background:#8DBECC;
+    margin-top: 5px;
+}

@@ -19,20 +19,28 @@
                 <br>
                 <li><i class="fas fa-hand-point-right"></i><a href="/editMember.html">Tildel oppgaver</a></li>
                 <br>
-                <li><i class="fas fa-users"></i><a href="/members.html">List prosjektmedlemmer</a></li>
+                <li><i class="fas fa-users"></i><a href="/members.html"><u>List prosjektmedlemmer</u></a></li>
                 <li><i class="fas fa-check"></i><a href="/categories.html">List oppgaver</a></li>
                 
             </ul>
         </div>
         <div id="content">
-            <h1>Existing members:</h1>
+            <h2>Prosjektmedlemmer</h2>
             <div id="members"></div>
+
+            <form>
+                <p>Filter by category: <select id="categoryId" name="categoryId"></select></p>
+                <button>Filter</button>
+            </form>
         </div>
     </div>
 </body>
 <script>
-    fetch("/api/members").then(response => response.text()).then(html => {
+    fetch("/api/members" + location.search).then(response => response.text()).then(html => {
         document.getElementById("members").innerHTML = html;
+    });
+    fetch("/api/categoryOptions").then(response => response.text()).then(html => {
+        document.getElementById("categoryId").innerHTML = html;
     });
 </script>
 </html>

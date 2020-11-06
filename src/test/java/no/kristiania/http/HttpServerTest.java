@@ -2,6 +2,8 @@ package no.kristiania.http;
 
 import no.kristiania.database.Member;
 import no.kristiania.database.MemberDao;
+import no.kristiania.database.ProductCategory;
+import no.kristiania.database.ProductCategoryDao;
 import org.flywaydb.core.Flyway;
 import org.h2.jdbcx.JdbcDataSource;
 import org.junit.jupiter.api.BeforeEach;
@@ -104,6 +106,38 @@ class HttpServerTest {
         memberDao.insert(member);
         HttpClient client = new HttpClient("localhost", server.getPort(), "/api/members");
         assertThat(client.getResponseBody()).contains("<li>Espen Bakken(20)<br>test@gmail.com</li>");
+    }
+
+    @Test
+    void shouldFilterMembersByCategory() throws SQLException, IOException {
+        MemberDao memberDao = new MemberDao(dataSource);
+        Member espen = new Member();
+        espen.setName("Espen");
+        espen.setLastName("Bakken");
+        espen.setAge(20);
+        espen.setEmail("test@gmail.com");
+        memberDao.insert(espen);
+
+        Member shazo = new Member();
+        shazo.setName("Shazo");
+        shazo.setLastName("Kul");
+        shazo.setAge(20);
+        shazo.setEmail("test123@gmail.com");
+        memberDao.insert(shazo);
+
+        ProductCategoryDao categoryDao = new ProductCategoryDao(dataSource);
+        ProductCategory beers = new ProductCategory();
+        beers.setName("Beer");
+        categoryDao.insert(beers);
+
+        shazo.setCategoryId(beers.getId());
+        memberDao.update(shazo);
+
+        HttpClient client = new HttpClient("localhost", server.getPort(), "/api/members?categoryId=" + beers.getId());
+        assertThat(client.getResponseBody())
+                .contains("<li>Shazo Kul(20)<br>test123@gmail.com</li>")
+                .doesNotContain("<li>Espen Bakken(20)<br>test@gmail.com</li>");
+
     }
 
     @Test

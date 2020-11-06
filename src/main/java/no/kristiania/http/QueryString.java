@@ -1,19 +1,19 @@
 package no.kristiania.http;
 
+import java.nio.charset.StandardCharsets;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
 public class QueryString {
     private final Map<String, String> parameters = new LinkedHashMap<>();
-//Her må det decodes
-    //String result = java.net.URLDecoder.decode(member.getEmail(), StandardCharsets.UTF_8.name());
     public QueryString(String queryString) {
         if (queryString.isEmpty()) return;
         for (String parameter : queryString.split("&")) {
             int equalsPos = parameter.indexOf('=');
             String key = parameter.substring(0, equalsPos);
             String value = parameter.substring(equalsPos+1);
-            this.parameters.put(key, value);
+            String result = java.net.URLDecoder.decode(value, StandardCharsets.UTF_8);
+            this.parameters.put(key, result);
         }
     }
 
