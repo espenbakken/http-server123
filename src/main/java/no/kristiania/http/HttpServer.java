@@ -161,12 +161,21 @@ public class HttpServer {
     }
 
     private void handleGetMembers(Socket clientSocket, String requestTarget, int questionPos) throws IOException, SQLException {
+        Integer categoryId = null;
+        if (questionPos != -1){
+
+            categoryId = Integer.valueOf(new QueryString(requestTarget.substring(questionPos+1))
+                    .getParameter("categoryId"));
+        }
         String body = "<ul>";
 
 
         for (Member member : memberDao.list()) {
-            body += "<li>" + member.getName() + " " + member.getLastName() + "(" + String.format("%.0f", member.getAge()) + ")" + "<br>" +
-                member.getEmail() + "</li>";
+            if (categoryId == null || categoryId.equals(member.getCategoryId())){
+                body += "<li>" + member.getName() + " " + member.getLastName() + "(" + String.format("%.0f", member.getAge()) + ")" + "<br>" +
+                        member.getEmail() + "</li>";
+            }
+
         }
         body += "</ul>";
         String response = "HTTP/1.1 200 OK\r\n" +
