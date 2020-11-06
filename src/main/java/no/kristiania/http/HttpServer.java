@@ -170,10 +170,8 @@ public class HttpServer {
         List<Member> members = categoryId == null ? memberDao.list() : memberDao.queryMembersByCategoryId(categoryId);
         String body = "<ul>";
         for (Member member : members) {
-            if (categoryId == null || categoryId.equals(member.getCategoryId())){
-                body += "<li>" + member.getName() + " " + member.getLastName() + "(" + String.format("%.0f", member.getAge()) + ")" + "<br>" +
+            body += "<li>" + member.getName() + " " + member.getLastName() + "(" + String.format("%.0f", member.getAge()) + ")" + "<br>" +
                         member.getEmail() + "</li>";
-            }
 
         }
         body += "</ul>";
