@@ -19,7 +19,7 @@ public class MemberDao extends AbstractDao<Member> {
     public void insert(Member member) throws SQLException {
         try (Connection connection = dataSource.getConnection()) {
             try (PreparedStatement statement = connection.prepareStatement(
-                    "INSERT INTO members (member_name, age, last_name, email) values (?, ?, ?, ?)",
+                    "INSERT INTO members (member_name, age, last_name, email, category_id) values (?, ?, ?, ?, ?)",
                     Statement.RETURN_GENERATED_KEYS
             )) {
                 //getter and setter method
@@ -27,6 +27,7 @@ public class MemberDao extends AbstractDao<Member> {
                 statement.setDouble(2, member.getAge());
                 statement.setString(3, member.getLastName());
                 statement.setString(4, member.getEmail());
+                statement.setObject(5, member.getCategoryId());
                 statement.executeUpdate();
                 //setting the keys to id
                 try (ResultSet generatedKeys = statement.getGeneratedKeys()) {
@@ -70,8 +71,19 @@ public class MemberDao extends AbstractDao<Member> {
         }
     }
 
-    public List<Member> queryMembersByCategoryId(Integer categoryId) {
-        return null;
+    public List<Member> queryMembersByCategoryId(Integer categoryId) throws SQLException {
+        try (Connection connection = dataSource.getConnection()) {
+            try (PreparedStatement statement = connection.prepareStatement("SELECT * FROM members WHERE category_id = ?")) {
+                statement.setInt(1, categoryId);
+                try (ResultSet rs = statement.executeQuery()) {
+                    List<Member> members = new ArrayList<>();
+                    while (rs.next()) {
+                        members.add(mapRow(rs));
+                    }
+                    return members;
+                }
+            }
+        }
     }
 
     //creating a column of row in which the data will display/stored

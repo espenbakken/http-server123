@@ -20,14 +20,18 @@ public class MemberDaoTest {
     private MemberDao memberDao;
     private static Random random = new Random();
     private ProductCategoryDao categoryDao;
+    private ProductCategory defaultCategory;
 
     @BeforeEach
-    void setUp() {
+    void setUp() throws SQLException {
         JdbcDataSource dataSource = new JdbcDataSource();
         dataSource.setUrl("jdbc:h2:mem:test;DB_CLOSE_DELAY=-1");
         Flyway.configure().dataSource(dataSource).load().migrate();
         memberDao = new MemberDao(dataSource);
         categoryDao = new ProductCategoryDao(dataSource);
+
+        defaultCategory = CategoryDaoTest.exampleCategory();
+        categoryDao.insert(defaultCategory);
     }
 
     @Test
@@ -63,12 +67,12 @@ public class MemberDaoTest {
     }
 
     @Test
-    void shouldRetrieveAllMemberProperties() throws SQLException{
+    void shouldSaveAndRetrieveAllMemberProperties() throws SQLException{
         memberDao.insert(exampleMember());
         memberDao.insert(exampleMember());
         Member member = exampleMember();
         memberDao.insert(member);
-        assertThat(member).hasNoNullFieldsOrPropertiesExcept("categoryId");
+        assertThat(member).hasNoNullFieldsOrProperties();
         assertThat(memberDao.retrieve(member.getId()))
                 .usingRecursiveComparison()
                 .isEqualTo(member);
@@ -77,7 +81,7 @@ public class MemberDaoTest {
     @Test
     void shouldReturnMembersAsOptions() throws SQLException {
         ProductOptionsController controller = new ProductOptionsController(memberDao);
-        Member member = MemberDaoTest.exampleMember();
+        Member member = exampleMember();
         memberDao.insert(member);
 
         assertThat(controller.getBody())
@@ -106,10 +110,11 @@ public class MemberDaoTest {
                 .isEqualTo("http://localhost:8080/index.html");
     }
 
-    public static Member exampleMember() {
+    private Member exampleMember() {
         Member member = new Member();
         member.setName(exampleMemberName());
         member.setAge((int) (10.50 + random.nextInt(20)));
+        member.setCategoryId(defaultCategory.getId());
         member.setLastName(exampleMemberName());
         member.setEmail(exampleMemberName());
         return member;
