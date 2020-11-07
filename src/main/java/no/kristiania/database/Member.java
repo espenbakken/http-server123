@@ -6,7 +6,7 @@ public class Member {
     private String email;
     private double age;
     private Integer id;
-    private Integer categoryId;
+    private Integer taskId;
 
     public void setName(String name) {
         this.name = name;
@@ -32,11 +32,11 @@ public class Member {
 
     public String getEmail() { return email; }
 
-    public Integer getCategoryId() {
-        return categoryId;
+    public Integer gettaskId() {
+        return taskId;
     }
 
-    public void setCategoryId(Integer categoryId) {
-        this.categoryId = categoryId;
+    public void settaskId(Integer taskId) {
+        this.taskId = taskId;
     }
 }

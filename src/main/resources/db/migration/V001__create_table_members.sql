@@ -2,7 +2,7 @@ create table members (
     member_name varchar
 );
 
-create table product_categories (
+create table member_tasks (
     id serial primary key,
     name varchar
     );

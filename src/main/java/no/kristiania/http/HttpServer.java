@@ -2,7 +2,7 @@ package no.kristiania.http;
 
 import no.kristiania.database.Member;
 import no.kristiania.database.MemberDao;
-import no.kristiania.database.ProductCategoryDao;
+import no.kristiania.database.MemberTaskDao;
 import org.flywaydb.core.Flyway;
 import org.postgresql.ds.PGSimpleDataSource;
 import org.slf4j.Logger;
@@ -32,14 +32,14 @@ public class HttpServer {
     public HttpServer(int port, DataSource dataSource) throws IOException {
 
         memberDao = new MemberDao(dataSource);
-        ProductCategoryDao productCategoryDao = new ProductCategoryDao(dataSource);
+        MemberTaskDao MemberTaskDao = new MemberTaskDao(dataSource);
 
         controllers = Map.of(
-                "/api/newCategory", new ProductCategoryPostController(productCategoryDao),
-                "/api/categories", new ProductCategoryGetController(productCategoryDao),
-                "/api/categoryOptions", new ProductCategoryOptionsController(productCategoryDao),
-                "/api/memberOptions", new ProductOptionsController(memberDao),
-                "/api/updateMember", new UpdateProductController(memberDao)
+                "/api/newtask", new MemberTaskPostController(MemberTaskDao),
+                "/api/tasks", new MemberTaskGetController(MemberTaskDao),
+                "/api/taskOptions", new MemberTaskOptionsController(MemberTaskDao),
+                "/api/memberOptions", new MemberOptionsController(memberDao),
+                "/api/updateMember", new UpdateMemberController(memberDao)
         );
 
         serverSocket = new ServerSocket(port);
@@ -78,7 +78,7 @@ public class HttpServer {
         //Here we deal with POST /addMember
         if (requestMethod.equals("POST")) {
             if (requestPath.equals("/api/newMember")){
-                handlePostProduct(clientSocket, request);
+                handlePostmember(clientSocket, request);
             } else{
                 getController(requestPath).handle(request, clientSocket);
 
@@ -104,7 +104,7 @@ public class HttpServer {
         return controllers.get(requestPath);
     }
 
-    private void handlePostProduct(Socket clientSocket, HttpMessage request) throws SQLException, IOException {
+    private void handlePostmember(Socket clientSocket, HttpMessage request) throws SQLException, IOException {
         QueryString requestParameter = new QueryString(request.getBody());
 
         Member member = new Member();
@@ -161,13 +161,13 @@ public class HttpServer {
     }
 
     private void handleGetMembers(Socket clientSocket, String requestTarget, int questionPos) throws IOException, SQLException {
-        Integer categoryId = null;
+        Integer taskId = null;
         if (questionPos != -1){
 
-            categoryId = Integer.valueOf(new QueryString(requestTarget.substring(questionPos+1))
-                    .getParameter("categoryId"));
+            taskId = Integer.valueOf(new QueryString(requestTarget.substring(questionPos+1))
+                    .getParameter("taskId"));
         }
-        List<Member> members = categoryId == null ? memberDao.list() : memberDao.queryMembersByCategoryId(categoryId);
+        List<Member> members = taskId == null ? memberDao.list() : memberDao.queryMembersBytaskId(taskId);
         String body = "<ul>";
         for (Member member : members) {
             body += "<li>" + member.getName() + " " + member.getLastName() + "(" + String.format("%.0f", member.getAge()) + ")" + "<br>" +

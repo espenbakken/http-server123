@@ -1,13 +1,13 @@
 @startuml
 
-entity Products {
+entity members {
     id
     --
     * name
-    category_id
+    task_id
 }
 
-entity ProductCategories {
+entity membertasks {
     id
     --
     name
@@ -22,14 +22,14 @@ entity Orders {
 }
 
 entity OrderLines {
-    product_id
+    member_id
     order_id
     --
     quantity
 }
 
-ProductCategories ||--o{ Products
-Products ||-o{ OrderLines
+membertasks ||--o{ members
+members ||-o{ OrderLines
 OrderLines }o-|| Orders
 
 @enduml

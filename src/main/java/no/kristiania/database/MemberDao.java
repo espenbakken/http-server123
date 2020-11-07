@@ -19,7 +19,7 @@ public class MemberDao extends AbstractDao<Member> {
     public void insert(Member member) throws SQLException {
         try (Connection connection = dataSource.getConnection()) {
             try (PreparedStatement statement = connection.prepareStatement(
-                    "INSERT INTO members (member_name, age, last_name, email, category_id) values (?, ?, ?, ?, ?)",
+                    "INSERT INTO members (member_name, age, last_name, email, task_id) values (?, ?, ?, ?, ?)",
                     Statement.RETURN_GENERATED_KEYS
             )) {
                 //getter and setter method
@@ -27,7 +27,7 @@ public class MemberDao extends AbstractDao<Member> {
                 statement.setDouble(2, member.getAge());
                 statement.setString(3, member.getLastName());
                 statement.setString(4, member.getEmail());
-                statement.setObject(5, member.getCategoryId());
+                statement.setObject(5, member.gettaskId());
                 statement.executeUpdate();
                 //setting the keys to id
                 try (ResultSet generatedKeys = statement.getGeneratedKeys()) {
@@ -42,10 +42,10 @@ public class MemberDao extends AbstractDao<Member> {
 
         try (Connection connection = dataSource.getConnection()) {
             try (PreparedStatement statement = connection.prepareStatement(
-                    "UPDATE members SET category_id = ? WHERE id = ?"
+                    "UPDATE members SET task_id = ? WHERE id = ?"
             )) {
                 //getter and setter method
-                statement.setInt(1, member.getCategoryId());
+                statement.setInt(1, member.gettaskId());
                 statement.setInt(2, member.getId());
                 statement.executeUpdate();
             }
@@ -71,10 +71,10 @@ public class MemberDao extends AbstractDao<Member> {
         }
     }
 
-    public List<Member> queryMembersByCategoryId(Integer categoryId) throws SQLException {
+    public List<Member> queryMembersBytaskId(Integer taskId) throws SQLException {
         try (Connection connection = dataSource.getConnection()) {
-            try (PreparedStatement statement = connection.prepareStatement("SELECT * FROM members WHERE category_id = ?")) {
-                statement.setInt(1, categoryId);
+            try (PreparedStatement statement = connection.prepareStatement("SELECT * FROM members WHERE task_id = ?")) {
+                statement.setInt(1, taskId);
                 try (ResultSet rs = statement.executeQuery()) {
                     List<Member> members = new ArrayList<>();
                     while (rs.next()) {
@@ -91,7 +91,7 @@ public class MemberDao extends AbstractDao<Member> {
     protected Member mapRow(ResultSet rs) throws SQLException {
         Member member = new Member();
         member.setId(rs.getInt("id"));
-        member.setCategoryId((Integer)rs.getObject("category_id"));
+        member.settaskId((Integer)rs.getObject("task_id"));
         member.setName(rs.getString("member_name"));
         member.setLastName(rs.getString("last_name"));
         member.setEmail(rs.getString("email"));

@@ -7,10 +7,10 @@ import java.io.IOException;
 import java.net.Socket;
 import java.sql.SQLException;
 
-public class ProductOptionsController implements HttpController {
+public class MemberOptionsController implements HttpController {
     private MemberDao memberDao;
 
-    public ProductOptionsController(MemberDao memberDao) {
+    public MemberOptionsController(MemberDao memberDao) {
         this.memberDao = memberDao;
     }
 

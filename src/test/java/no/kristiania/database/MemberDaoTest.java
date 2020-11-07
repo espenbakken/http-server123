@@ -1,14 +1,13 @@
 package no.kristiania.database;
 
 import no.kristiania.http.HttpMessage;
-import no.kristiania.http.ProductOptionsController;
-import no.kristiania.http.UpdateProductController;
+import no.kristiania.http.MemberOptionsController;
+import no.kristiania.http.UpdateMemberController;
 import org.flywaydb.core.Flyway;
 import org.h2.jdbcx.JdbcDataSource;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import java.awt.event.PaintEvent;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.Random;
@@ -19,8 +18,8 @@ public class MemberDaoTest {
 
     private MemberDao memberDao;
     private static Random random = new Random();
-    private ProductCategoryDao categoryDao;
-    private ProductCategory defaultCategory;
+    private MemberTaskDao taskDao;
+    private MemberTask defaulttask;
 
     @BeforeEach
     void setUp() throws SQLException {
@@ -28,10 +27,10 @@ public class MemberDaoTest {
         dataSource.setUrl("jdbc:h2:mem:test;DB_CLOSE_DELAY=-1");
         Flyway.configure().dataSource(dataSource).load().migrate();
         memberDao = new MemberDao(dataSource);
-        categoryDao = new ProductCategoryDao(dataSource);
+        taskDao = new MemberTaskDao(dataSource);
 
-        defaultCategory = CategoryDaoTest.exampleCategory();
-        categoryDao.insert(defaultCategory);
+        defaulttask = TaskDaoTest.exampletask();
+        taskDao.insert(defaulttask);
     }
 
     @Test
@@ -46,21 +45,21 @@ public class MemberDaoTest {
     }
 
     @Test
-    void shouldQueryMembersByCategory() throws SQLException {
-        ProductCategory category = CategoryDaoTest.exampleCategory();
-        categoryDao.insert(category);
+    void shouldQueryMembersBytask() throws SQLException {
+        MemberTask task = TaskDaoTest.exampletask();
+        taskDao.insert(task);
 
-        ProductCategory otherCategory = CategoryDaoTest.exampleCategory();
-        categoryDao.insert(otherCategory);
+        MemberTask othertask = TaskDaoTest.exampletask();
+        taskDao.insert(othertask);
 
         Member matchingMember = exampleMember();
-        matchingMember.setCategoryId(category.getId());
+        matchingMember.settaskId(task.getId());
         memberDao.insert(matchingMember);
         Member nonMatchingMember = exampleMember();
-        nonMatchingMember.setCategoryId(otherCategory.getId());
+        nonMatchingMember.settaskId(othertask.getId());
         memberDao.insert(nonMatchingMember);
 
-        assertThat(memberDao.queryMembersByCategoryId(category.getId()))
+        assertThat(memberDao.queryMembersBytaskId(task.getId()))
                 .extracting(Member::getId)
                 .contains(matchingMember.getId())
                 .doesNotContain(nonMatchingMember.getId());
@@ -80,7 +79,7 @@ public class MemberDaoTest {
 
     @Test
     void shouldReturnMembersAsOptions() throws SQLException {
-        ProductOptionsController controller = new ProductOptionsController(memberDao);
+        MemberOptionsController controller = new MemberOptionsController(memberDao);
         Member member = exampleMember();
         memberDao.insert(member);
 
@@ -89,21 +88,21 @@ public class MemberDaoTest {
     }
 
     @Test
-    void shouldUpdateExistingProductWithNewCategory() throws IOException, SQLException {
-        UpdateProductController controller = new UpdateProductController(memberDao);
+    void shouldUpdateExistingmemberWithNewtask() throws IOException, SQLException {
+        UpdateMemberController controller = new UpdateMemberController(memberDao);
 
         Member member = exampleMember();
         memberDao.insert(member);
 
-        ProductCategory category = CategoryDaoTest.exampleCategory();
-        categoryDao.insert(category);
+        MemberTask task = TaskDaoTest.exampletask();
+        taskDao.insert(task);
 
-        String body = "memberId=" + member.getId() + "&categoryId=" + category.getId();
+        String body = "memberId=" + member.getId() + "&taskId=" + task.getId();
 
         HttpMessage response = controller.handle(new HttpMessage(body));
 
-        assertThat(memberDao.retrieve(member.getId()).getCategoryId())
-                .isEqualTo(category.getId());
+        assertThat(memberDao.retrieve(member.getId()).gettaskId())
+                .isEqualTo(task.getId());
         assertThat(response.getStartLine())
                 .isEqualTo("HTTP/1.1 302 Redirect");
         assertThat(response.getHeaders().get("Location"))
@@ -114,7 +113,7 @@ public class MemberDaoTest {
         Member member = new Member();
         member.setName(exampleMemberName());
         member.setAge((int) (10.50 + random.nextInt(20)));
-        member.setCategoryId(defaultCategory.getId());
+        member.settaskId(defaulttask.getId());
         member.setLastName(exampleMemberName());
         member.setEmail(exampleMemberName());
         return member;

@@ -15,19 +15,19 @@
         <div id="menu">
             <ul>
                 <li><i class="fas fa-user-plus"></i><a href="/newMember.html">Legg til nytt medlem</a></li>
-                <li><i class="fas fa-plus-circle"></i><a href="/newCategory.html"><u>Legg til ny oppgave</u></a></li>
+                <li><i class="fas fa-plus-circle"></i><a href="/newtask.html"><u>Legg til ny oppgave</u></a></li>
                 <br>
                 <li><i class="fas fa-hand-point-right"></i><a href="/editMember.html">Tildel oppgaver</a></li>
                 <br>
                 <li><i class="fas fa-users"></i><a href="/members.html">List prosjektmedlemmer</a></li>
-                <li><i class="fas fa-check"></i><a href="/categories.html">List oppgaver</a></li>
+                <li><i class="fas fa-check"></i><a href="/tasks.html">List oppgaver</a></li>
                 
             </ul>
         </div>
         <div id="content">
             <h2>Legg til ny oppgave</h2>
-            <form method="post" action="/api/newCategory">
-                <p>Task: <input name="categoryName"/></p>
+            <form method="post" action="/api/newtask">
+                <p>Task: <input name="taskName"/></p>
                 <p>Display color: <input name="color" type="color"/></p>
                 <p><button>Create task</button></p>
             </form>

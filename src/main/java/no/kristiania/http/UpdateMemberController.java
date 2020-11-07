@@ -7,10 +7,10 @@ import java.io.IOException;
 import java.net.Socket;
 import java.sql.SQLException;
 
-public class UpdateProductController implements HttpController{
+public class UpdateMemberController implements HttpController{
     private MemberDao memberDao;
 
-    public UpdateProductController(MemberDao memberDao) {
+    public UpdateMemberController(MemberDao memberDao) {
         this.memberDao = memberDao;
     }
 
@@ -24,9 +24,9 @@ public class UpdateProductController implements HttpController{
         QueryString requestParameter = new QueryString(request.getBody());
 
         Integer memberId = Integer.valueOf(requestParameter.getParameter("memberId"));
-        Integer categoryId = Integer.valueOf(requestParameter.getParameter("categoryId"));
+        Integer taskId = Integer.valueOf(requestParameter.getParameter("taskId"));
         Member member = memberDao.retrieve(memberId);
-        member.setCategoryId(categoryId);
+        member.settaskId(taskId);
 
         memberDao.update(member);
 

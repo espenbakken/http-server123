@@ -1,25 +1,25 @@
 package no.kristiania.http;
 
-import no.kristiania.database.ProductCategory;
-import no.kristiania.database.ProductCategoryDao;
+import no.kristiania.database.MemberTask;
+import no.kristiania.database.MemberTaskDao;
 
 import java.io.IOException;
 import java.net.Socket;
 import java.sql.SQLException;
 
-public class ProductCategoryGetController implements HttpController {
-    private ProductCategoryDao productCategoryDao;
+public class MemberTaskGetController implements HttpController {
+    private MemberTaskDao MemberTaskDao;
 
-    public ProductCategoryGetController(ProductCategoryDao productCategoryDao) {
+    public MemberTaskGetController(MemberTaskDao MemberTaskDao) {
 
-        this.productCategoryDao = productCategoryDao;
+        this.MemberTaskDao = MemberTaskDao;
     }
 
     @Override
     public void handle(HttpMessage request, Socket clientSocket) throws IOException, SQLException {
         String body = "<ul>";
-        for (ProductCategory category : productCategoryDao.list()) {
-            body += "<li>" + category.getName() + "</li>";
+        for (MemberTask task : MemberTaskDao.list()) {
+            body += "<li>" + task.getName() + "</li>";
         }
 
         body += "</ul>";

@@ -1,6 +1,6 @@
 package no.kristiania.database;
 
-public class ProductCategory {
+public class MemberTask {
     private String name;
     private Integer id;
 

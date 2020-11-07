@@ -2,8 +2,8 @@ package no.kristiania.http;
 
 import no.kristiania.database.Member;
 import no.kristiania.database.MemberDao;
-import no.kristiania.database.ProductCategory;
-import no.kristiania.database.ProductCategoryDao;
+import no.kristiania.database.MemberTask;
+import no.kristiania.database.MemberTaskDao;
 import org.flywaydb.core.Flyway;
 import org.h2.jdbcx.JdbcDataSource;
 import org.junit.jupiter.api.BeforeEach;
@@ -109,7 +109,7 @@ class HttpServerTest {
     }
 
     @Test
-    void shouldFilterMembersByCategory() throws SQLException, IOException {
+    void shouldFilterMembersBytask() throws SQLException, IOException {
         MemberDao memberDao = new MemberDao(dataSource);
         Member espen = new Member();
         espen.setName("Espen");
@@ -125,15 +125,15 @@ class HttpServerTest {
         shazo.setEmail("test123@gmail.com");
         memberDao.insert(shazo);
 
-        ProductCategoryDao categoryDao = new ProductCategoryDao(dataSource);
-        ProductCategory beers = new ProductCategory();
+        MemberTaskDao taskDao = new MemberTaskDao(dataSource);
+        MemberTask beers = new MemberTask();
         beers.setName("Beer");
-        categoryDao.insert(beers);
+        taskDao.insert(beers);
 
-        shazo.setCategoryId(beers.getId());
+        shazo.settaskId(beers.getId());
         memberDao.update(shazo);
 
-        HttpClient client = new HttpClient("localhost", server.getPort(), "/api/members?categoryId=" + beers.getId());
+        HttpClient client = new HttpClient("localhost", server.getPort(), "/api/members?taskId=" + beers.getId());
         assertThat(client.getResponseBody())
                 .contains("<li>Shazo Kul(20)<br>test123@gmail.com</li>")
                 .doesNotContain("<li>Espen Bakken(20)<br>test@gmail.com</li>");
@@ -141,12 +141,12 @@ class HttpServerTest {
     }
 
     @Test
-    void shouldPostNewCategory() throws IOException, SQLException {
-        String requestBody = "categoryName=candy&color=black";
-        HttpClient postClient = new HttpClient("localhost", server.getPort(), "/api/newCategory", "POST", requestBody);
+    void shouldPostNewtask() throws IOException, SQLException {
+        String requestBody = "taskName=candy&color=black";
+        HttpClient postClient = new HttpClient("localhost", server.getPort(), "/api/newtask", "POST", requestBody);
         assertEquals(200, postClient.getStatusCode());
 
-        HttpClient getClient = new HttpClient("localhost", server.getPort(), "/api/categories");
+        HttpClient getClient = new HttpClient("localhost", server.getPort(), "/api/tasks");
         assertThat(getClient.getResponseBody()).contains("<li>candy</li>");
     }
 }

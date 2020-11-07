@@ -1,1 +1,1 @@
-alter table members add column category_id integer null references product_categories(id);
+alter table members add column task_id integer null references member_tasks(id);

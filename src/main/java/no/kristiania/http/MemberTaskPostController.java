@@ -1,27 +1,27 @@
 package no.kristiania.http;
 
-import no.kristiania.database.ProductCategory;
-import no.kristiania.database.ProductCategoryDao;
+import no.kristiania.database.MemberTask;
+import no.kristiania.database.MemberTaskDao;
 
 import java.io.IOException;
 import java.net.Socket;
 import java.sql.SQLException;
 
-public class ProductCategoryPostController implements HttpController {
-    private ProductCategoryDao productCategoryDao;
+public class MemberTaskPostController implements HttpController {
+    private MemberTaskDao MemberTaskDao;
 
-    public ProductCategoryPostController(ProductCategoryDao productCategoryDao) {
+    public MemberTaskPostController(MemberTaskDao MemberTaskDao) {
 
-        this.productCategoryDao = productCategoryDao;
+        this.MemberTaskDao = MemberTaskDao;
     }
 
     @Override
     public void handle(HttpMessage request, Socket clientSocket) throws IOException, SQLException {
         QueryString requestParameter = new QueryString(request.getBody());
 
-        ProductCategory category = new ProductCategory();
-        category.setName(requestParameter.getParameter("categoryName"));
-        productCategoryDao.insert(category);
+        MemberTask task = new MemberTask();
+        task.setName(requestParameter.getParameter("taskName"));
+        MemberTaskDao.insert(task);
 
         String body = "Ny kategori er lagt til!";
         String response = "HTTP/1.1 200 OK\r\n" +
