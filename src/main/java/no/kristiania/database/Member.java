@@ -32,11 +32,11 @@ public class Member {
 
     public String getEmail() { return email; }
 
-    public Integer gettaskId() {
+    public Integer getTaskId() {
         return taskId;
     }
 
-    public void settaskId(Integer taskId) {
+    public void setTaskId(Integer taskId) {
         this.taskId = taskId;
     }
 }

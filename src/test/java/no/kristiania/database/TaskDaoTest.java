@@ -25,9 +25,9 @@ public class TaskDaoTest {
     }
 
     @Test
-    void shouldListAlltasks() throws SQLException {
-        MemberTask task1 = exampletask();
-        MemberTask task2 = exampletask();
+    void shouldListAllTasks() throws SQLException {
+        MemberTask task1 = exampleTask();
+        MemberTask task2 = exampleTask();
         taskDao.insert(task1);
         taskDao.insert(task2);
         assertThat(taskDao.list())
@@ -37,10 +37,10 @@ public class TaskDaoTest {
 
 
     @Test
-    void shouldRetrieveAlltaskProperties() throws SQLException {
-        taskDao.insert(exampletask());
-        taskDao.insert(exampletask());
-        MemberTask task = exampletask();
+    void shouldRetrieveAllTaskProperties() throws SQLException {
+        taskDao.insert(exampleTask());
+        taskDao.insert(exampleTask());
+        MemberTask task = exampleTask();
         taskDao.insert(task);
         assertThat(task).hasNoNullFieldsOrProperties();
 
@@ -50,32 +50,32 @@ public class TaskDaoTest {
     }
 
     @Test
-    void shouldReturntasksAsOptions() throws SQLException {
+    void shouldReturnTasksAsOptions() throws SQLException {
         MemberTaskOptionsController controller = new MemberTaskOptionsController(taskDao);
-        MemberTask membertask = exampletask();
-        taskDao.insert(membertask);
+        MemberTask memberTask = exampleTask();
+        taskDao.insert(memberTask);
 
         assertThat(controller.getBody(null))
-                .contains("<option value=" + membertask.getId() + ">" + membertask.getName() + "</option>");
+                .contains("<option value=" + memberTask.getId() + ">" + memberTask.getName() + "</option>");
     }
 
     @Test
-    void shouldSelectCurrenttasksInOptions() throws SQLException {
+    void shouldSelectCurrentTasksInOptions() throws SQLException {
         MemberTaskOptionsController controller = new MemberTaskOptionsController(taskDao);
-        MemberTask membertask = exampletask();
-        taskDao.insert(membertask);
+        MemberTask memberTask = exampleTask();
+        taskDao.insert(memberTask);
 
-        assertThat(controller.getBody(membertask.getId()))
-                .contains("<option value=" + membertask.getId() + " selected='selected'>" + membertask.getName() + "</option>");
+        assertThat(controller.getBody(memberTask.getId()))
+                .contains("<option value=" + memberTask.getId() + " selected='selected'>" + memberTask.getName() + "</option>");
     }
 
-    public static MemberTask exampletask() {
+    public static MemberTask exampleTask() {
         MemberTask task = new MemberTask();
-        task.setName(exampletaskName());
+        task.setName(exampleTaskName());
         return task;
     }
 
-    private static String exampletaskName() {
+    private static String exampleTaskName() {
         String[] options = {"Fruit", "Candy", "Non-food", "Dairy"};
         return options[random.nextInt(options.length)];
     }

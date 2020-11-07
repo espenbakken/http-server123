@@ -8,11 +8,11 @@ import java.net.Socket;
 import java.sql.SQLException;
 
 public class MemberTaskPostController implements HttpController {
-    private MemberTaskDao MemberTaskDao;
+    private MemberTaskDao memberTaskDao;
 
-    public MemberTaskPostController(MemberTaskDao MemberTaskDao) {
+    public MemberTaskPostController(MemberTaskDao memberTaskDao) {
 
-        this.MemberTaskDao = MemberTaskDao;
+        this.memberTaskDao = memberTaskDao;
     }
 
     @Override
@@ -21,7 +21,7 @@ public class MemberTaskPostController implements HttpController {
 
         MemberTask task = new MemberTask();
         task.setName(requestParameter.getParameter("taskName"));
-        MemberTaskDao.insert(task);
+        memberTaskDao.insert(task);
 
         String body = "Ny kategori er lagt til!";
         String response = "HTTP/1.1 200 OK\r\n" +

@@ -7,7 +7,7 @@ entity members {
     task_id
 }
 
-entity membertasks {
+entity memberTasks {
     id
     --
     name
@@ -28,7 +28,7 @@ entity OrderLines {
     quantity
 }
 
-membertasks ||--o{ members
+memberTasks ||--o{ members
 members ||-o{ OrderLines
 OrderLines }o-|| Orders
 

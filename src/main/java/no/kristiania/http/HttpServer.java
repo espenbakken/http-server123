@@ -32,12 +32,12 @@ public class HttpServer {
     public HttpServer(int port, DataSource dataSource) throws IOException {
 
         memberDao = new MemberDao(dataSource);
-        MemberTaskDao MemberTaskDao = new MemberTaskDao(dataSource);
+        MemberTaskDao memberTaskDao = new MemberTaskDao(dataSource);
 
         controllers = Map.of(
-                "/api/newtask", new MemberTaskPostController(MemberTaskDao),
-                "/api/tasks", new MemberTaskGetController(MemberTaskDao),
-                "/api/taskOptions", new MemberTaskOptionsController(MemberTaskDao),
+                "/api/newTask", new MemberTaskPostController(memberTaskDao),
+                "/api/tasks", new MemberTaskGetController(memberTaskDao),
+                "/api/taskOptions", new MemberTaskOptionsController(memberTaskDao),
                 "/api/memberOptions", new MemberOptionsController(memberDao),
                 "/api/updateMember", new UpdateMemberController(memberDao)
         );
@@ -78,7 +78,7 @@ public class HttpServer {
         //Here we deal with POST /addMember
         if (requestMethod.equals("POST")) {
             if (requestPath.equals("/api/newMember")){
-                handlePostmember(clientSocket, request);
+                handlePostMember(clientSocket, request);
             } else{
                 getController(requestPath).handle(request, clientSocket);
 
@@ -104,7 +104,7 @@ public class HttpServer {
         return controllers.get(requestPath);
     }
 
-    private void handlePostmember(Socket clientSocket, HttpMessage request) throws SQLException, IOException {
+    private void handlePostMember(Socket clientSocket, HttpMessage request) throws SQLException, IOException {
         QueryString requestParameter = new QueryString(request.getBody());
 
         Member member = new Member();
@@ -167,7 +167,7 @@ public class HttpServer {
             taskId = Integer.valueOf(new QueryString(requestTarget.substring(questionPos+1))
                     .getParameter("taskId"));
         }
-        List<Member> members = taskId == null ? memberDao.list() : memberDao.queryMembersBytaskId(taskId);
+        List<Member> members = taskId == null ? memberDao.list() : memberDao.queryMembersByTaskId(taskId);
         String body = "<ul>";
         for (Member member : members) {
             body += "<li>" + member.getName() + " " + member.getLastName() + "(" + String.format("%.0f", member.getAge()) + ")" + "<br>" +

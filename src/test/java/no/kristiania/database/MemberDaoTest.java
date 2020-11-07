@@ -19,7 +19,7 @@ public class MemberDaoTest {
     private MemberDao memberDao;
     private static Random random = new Random();
     private MemberTaskDao taskDao;
-    private MemberTask defaulttask;
+    private MemberTask defaultTask;
 
     @BeforeEach
     void setUp() throws SQLException {
@@ -29,8 +29,8 @@ public class MemberDaoTest {
         memberDao = new MemberDao(dataSource);
         taskDao = new MemberTaskDao(dataSource);
 
-        defaulttask = TaskDaoTest.exampletask();
-        taskDao.insert(defaulttask);
+        defaultTask = TaskDaoTest.exampleTask();
+        taskDao.insert(defaultTask);
     }
 
     @Test
@@ -45,21 +45,21 @@ public class MemberDaoTest {
     }
 
     @Test
-    void shouldQueryMembersBytask() throws SQLException {
-        MemberTask task = TaskDaoTest.exampletask();
+    void shouldQueryMembersByTask() throws SQLException {
+        MemberTask task = TaskDaoTest.exampleTask();
         taskDao.insert(task);
 
-        MemberTask othertask = TaskDaoTest.exampletask();
-        taskDao.insert(othertask);
+        MemberTask otherTask = TaskDaoTest.exampleTask();
+        taskDao.insert(otherTask);
 
         Member matchingMember = exampleMember();
-        matchingMember.settaskId(task.getId());
+        matchingMember.setTaskId(task.getId());
         memberDao.insert(matchingMember);
         Member nonMatchingMember = exampleMember();
-        nonMatchingMember.settaskId(othertask.getId());
+        nonMatchingMember.setTaskId(otherTask.getId());
         memberDao.insert(nonMatchingMember);
 
-        assertThat(memberDao.queryMembersBytaskId(task.getId()))
+        assertThat(memberDao.queryMembersByTaskId(task.getId()))
                 .extracting(Member::getId)
                 .contains(matchingMember.getId())
                 .doesNotContain(nonMatchingMember.getId());
@@ -88,20 +88,20 @@ public class MemberDaoTest {
     }
 
     @Test
-    void shouldUpdateExistingmemberWithNewtask() throws IOException, SQLException {
+    void shouldUpdateExistingMemberWithNewTask() throws IOException, SQLException {
         UpdateMemberController controller = new UpdateMemberController(memberDao);
 
         Member member = exampleMember();
         memberDao.insert(member);
 
-        MemberTask task = TaskDaoTest.exampletask();
+        MemberTask task = TaskDaoTest.exampleTask();
         taskDao.insert(task);
 
         String body = "memberId=" + member.getId() + "&taskId=" + task.getId();
 
         HttpMessage response = controller.handle(new HttpMessage(body));
 
-        assertThat(memberDao.retrieve(member.getId()).gettaskId())
+        assertThat(memberDao.retrieve(member.getId()).getTaskId())
                 .isEqualTo(task.getId());
         assertThat(response.getStartLine())
                 .isEqualTo("HTTP/1.1 302 Redirect");
@@ -113,7 +113,7 @@ public class MemberDaoTest {
         Member member = new Member();
         member.setName(exampleMemberName());
         member.setAge((int) (10.50 + random.nextInt(20)));
-        member.settaskId(defaulttask.getId());
+        member.setTaskId(defaultTask.getId());
         member.setLastName(exampleMemberName());
         member.setEmail(exampleMemberName());
         return member;

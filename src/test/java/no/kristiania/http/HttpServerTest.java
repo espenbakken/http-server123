@@ -34,7 +34,7 @@ class HttpServerTest {
     }
 
     @Test
-    void shouldReturnSuccesfulErrorCode() throws IOException {
+    void shouldReturnSuccessfulErrorCode() throws IOException {
         HttpClient client = new HttpClient("localhost", server.getPort(), "/echo");
         assertEquals(200, client.getStatusCode());
     }
@@ -109,7 +109,7 @@ class HttpServerTest {
     }
 
     @Test
-    void shouldFilterMembersBytask() throws SQLException, IOException {
+    void shouldFilterMembersByTask() throws SQLException, IOException {
         MemberDao memberDao = new MemberDao(dataSource);
         Member espen = new Member();
         espen.setName("Espen");
@@ -130,7 +130,7 @@ class HttpServerTest {
         beers.setName("Beer");
         taskDao.insert(beers);
 
-        shazo.settaskId(beers.getId());
+        shazo.setTaskId(beers.getId());
         memberDao.update(shazo);
 
         HttpClient client = new HttpClient("localhost", server.getPort(), "/api/members?taskId=" + beers.getId());
@@ -141,7 +141,7 @@ class HttpServerTest {
     }
 
     @Test
-    void shouldPostNewtask() throws IOException, SQLException {
+    void shouldPostNewTask() throws IOException, SQLException {
         String requestBody = "taskName=candy&color=black";
         HttpClient postClient = new HttpClient("localhost", server.getPort(), "/api/newtask", "POST", requestBody);
         assertEquals(200, postClient.getStatusCode());

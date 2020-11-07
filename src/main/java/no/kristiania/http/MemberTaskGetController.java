@@ -8,17 +8,17 @@ import java.net.Socket;
 import java.sql.SQLException;
 
 public class MemberTaskGetController implements HttpController {
-    private MemberTaskDao MemberTaskDao;
+    private MemberTaskDao memberTaskDao;
 
-    public MemberTaskGetController(MemberTaskDao MemberTaskDao) {
+    public MemberTaskGetController(MemberTaskDao memberTaskDao) {
 
-        this.MemberTaskDao = MemberTaskDao;
+        this.memberTaskDao = memberTaskDao;
     }
 
     @Override
     public void handle(HttpMessage request, Socket clientSocket) throws IOException, SQLException {
         String body = "<ul>";
-        for (MemberTask task : MemberTaskDao.list()) {
+        for (MemberTask task : memberTaskDao.list()) {
             body += "<li>" + task.getName() + "</li>";
         }
 

@@ -26,7 +26,7 @@ public class UpdateMemberController implements HttpController{
         Integer memberId = Integer.valueOf(requestParameter.getParameter("memberId"));
         Integer taskId = Integer.valueOf(requestParameter.getParameter("taskId"));
         Member member = memberDao.retrieve(memberId);
-        member.settaskId(taskId);
+        member.setTaskId(taskId);
 
         memberDao.update(member);
 
