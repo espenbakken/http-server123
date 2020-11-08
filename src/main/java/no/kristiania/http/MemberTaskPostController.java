@@ -23,12 +23,10 @@ public class MemberTaskPostController implements HttpController {
         task.setName(requestParameter.getParameter("taskName"));
         memberTaskDao.insert(task);
 
-        String body = "Ny kategori er lagt til!";
-        String response = "HTTP/1.1 200 OK\r\n" +
+        String response = "HTTP/1.1 302 Redirect\r\n" +
                 "Connection: close\r\n" +
-                "Content-Length: " + body.length() + "\r\n" +
-                "\r\n" +
-                body;
+                "Location: http://localhost:8080/index.html\r\n" +
+                "\r\n";
         clientSocket.getOutputStream().write(response.getBytes());
     }
 }

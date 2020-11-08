@@ -86,7 +86,7 @@ class HttpServerTest {
     void shouldPostNewMember() throws IOException, SQLException {
         String requestBody = "memberName=apples&age=10";
         HttpClient client = new HttpClient("localhost", server.getPort(), "/api/newMember", "POST", requestBody);
-        assertEquals(200, client.getStatusCode());
+        assertEquals(302, client.getStatusCode());
         assertThat(server.getMembers())
                 .filteredOn(member -> member.getName().equals("apples"))
                 .isNotEmpty()
@@ -140,11 +140,11 @@ class HttpServerTest {
 
     }
 
-    @Test
+   @Test
     void shouldPostNewTask() throws IOException, SQLException {
         String requestBody = "taskName=candy&color=black";
-        HttpClient postClient = new HttpClient("localhost", server.getPort(), "/api/newtask", "POST", requestBody);
-        assertEquals(200, postClient.getStatusCode());
+        HttpClient postClient = new HttpClient("localhost", server.getPort(), "/api/newTask", "POST", requestBody);
+        assertEquals(302, postClient.getStatusCode());
 
         HttpClient getClient = new HttpClient("localhost", server.getPort(), "/api/tasks");
         assertThat(getClient.getResponseBody()).contains("<li>candy</li>");

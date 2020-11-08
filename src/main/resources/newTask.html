@@ -10,7 +10,7 @@
 <body>
     <div id="container">
         <div id="header">
-            <h1><i class="fas fa-tasks"></i>Prosjektstyringsverktøy</h1>
+            <a href="index.html"><h1><i class="fas fa-tasks"></i>Prosjektstyringsverktøy</h1></a>
         </div>
         <div id="menu">
             <ul>
@@ -26,9 +26,9 @@
         </div>
         <div id="content">
             <h2>Legg til ny oppgave</h2>
-            <form method="post" action="/api/newtask">
+            <form method="post" action="/api/newTask">
                 <p>Task: <input name="taskName"/></p>
-                <p>Display color: <input name="color" type="color"/></p>
+                <p>Status: <select><option>Må gjøres</option><option>Under arbeid</option><option>Fullført</option></select></p>
                 <p><button>Create task</button></p>
             </form>
         </div>

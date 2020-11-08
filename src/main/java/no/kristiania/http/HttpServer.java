@@ -113,12 +113,10 @@ public class HttpServer {
         member.setLastName(requestParameter.getParameter("lastName"));
         member.setEmail(requestParameter.getParameter("email"));
         memberDao.insert(member);
-        String body = "Gruppemedlem er lagt til i databasen!";
-        String response = "HTTP/1.1 200 OK\r\n" +
+        String response ="HTTP/1.1 302 Redirect\r\n" +
                 "Connection: close\r\n" +
-                "Content-Length: " + body.length() + "\r\n" +
-                "\r\n" +
-                body;
+                "Location: http://localhost:8080/index.html\r\n" +
+                "\r\n";
         clientSocket.getOutputStream().write(response.getBytes());
     }
 
